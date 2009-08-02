@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PanGu", "PanGu\PanGu.csproj", "{091E1C60-F77B-45A1-844C-86C5F508B57B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo", "Demo\Demo.csproj", "{6B5AB614-25F9-4628-9F4C-594C3B2F4049}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,6 +15,10 @@ Global
 		{091E1C60-F77B-45A1-844C-86C5F508B57B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{091E1C60-F77B-45A1-844C-86C5F508B57B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{091E1C60-F77B-45A1-844C-86C5F508B57B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B5AB614-25F9-4628-9F4C-594C3B2F4049}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B5AB614-25F9-4628-9F4C-594C3B2F4049}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B5AB614-25F9-4628-9F4C-594C3B2F4049}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B5AB614-25F9-4628-9F4C-594C3B2F4049}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

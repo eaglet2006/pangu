@@ -21,7 +21,28 @@ using System.Text;
 
 namespace PanGu
 {
-    public class Segment
+    [Serializable]
+    public class WordInfo
     {
+        /// <summary>
+        /// Word
+        /// </summary>
+        public String Word;
+
+        /// <summary>
+        /// Part of speech
+        /// </summary>
+        public int Pos;
+
+        /// <summary>
+        /// Frequency for this word
+        /// </summary>
+        public double Frequency;
+
+        public override string ToString()
+        {
+            return Word;
+        }
+
     }
 }

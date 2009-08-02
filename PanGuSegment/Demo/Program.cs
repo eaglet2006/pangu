@@ -17,11 +17,21 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Windows.Forms;
 
-namespace PanGu
+namespace Demo
 {
-    public class Segment
+    static class Program
     {
+        /// <summary>
+        /// The main entry point for the application.
+        /// </summary>
+        [STAThread]
+        static void Main()
+        {
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(new FormDemo());
+        }
     }
 }

@@ -17,11 +17,29 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
 using System.Text;
+using System.Windows.Forms;
 
-namespace PanGu
+using PanGu.Dict;
+
+namespace Demo
 {
-    public class Segment
+    public partial class FormDemo : Form
     {
+        public FormDemo()
+        {
+            InitializeComponent();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            WordDictionary wd = new WordDictionary();
+
+            string dictFile = PanGu.Framework.Path.AppendDivision(textBox1.Text, '\\') + "Dict.Dct";
+            wd.Load(dictFile);
+        }
     }
 }
