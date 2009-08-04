@@ -9,7 +9,21 @@ namespace PanGu.Dict
     [Serializable]
     public class WordDictionaryFile
     {
-        public List<WordInfo> Dicts = new List<WordInfo>();
+        public List<WordAttribute> Dicts = new List<WordAttribute>();
+    }
+
+    public struct PositionLength
+    {
+        public int Position;
+        public int Length;
+        public WordAttribute WordAttr;
+
+        public PositionLength(int position, int length, WordAttribute wordAttr)
+        {
+            this.Position = position;
+            this.Length = length;
+            this.WordAttr = wordAttr;
+        }
     }
 
     /// <summary>
@@ -17,16 +31,67 @@ namespace PanGu.Dict
     /// </summary>
     public class WordDictionary
     {
-        Dictionary<string, WordInfo> _WordDict = new Dictionary<string, WordInfo>();
+        Dictionary<string, WordAttribute> _WordDict = new Dictionary<string, WordAttribute>();
 
         Dictionary<char, byte[]> _FirstCharDict = new Dictionary<char,byte[]>();
 
+        public Framework.AppendList<PositionLength> GetAllMatchs(string text)
+        {
+            Framework.AppendList<PositionLength> result = new PanGu.Framework.AppendList<PositionLength>();
+
+            if (text == null && text == "")
+            {
+                return result;
+            }
+
+            string keyText = text;
+
+            if (text[0] < 128)
+            {
+                keyText = keyText.ToLower();
+            }
+
+            for (int i = 0; i < text.Length; i++)
+            {
+
+                byte[] lenList;
+                char fst = keyText[i];
+
+                if (_FirstCharDict.TryGetValue(fst, out lenList))
+                {
+                    foreach (byte len in lenList)
+                    {
+                        if (len == 0)
+                        {
+                            break;
+                        }
+
+                        if (i + len > keyText.Length)
+                        {
+                            continue;
+                        }
+
+                        string key = keyText.Substring(i, len);
+
+                        WordAttribute wa;
+                        if (_WordDict.TryGetValue(key, out wa))
+                        {
+                            result.Add(new PositionLength(i, len, wa));
+                        }
+                    }
+                }
+            }
+
+            return result;
+        }
+
+
         public void Load(String fileName)
         {
-            _WordDict = new Dictionary<string, WordInfo>();
+            _WordDict = new Dictionary<string, WordAttribute>();
             _FirstCharDict = new Dictionary<char, byte[]>();
 
-            foreach (WordInfo wordInfo in LoadFromBinFile(fileName).Dicts)
+            foreach (WordAttribute wordInfo in LoadFromBinFile(fileName).Dicts)
             {
                 string key = wordInfo.Word.ToLower();
                 if (!_WordDict.ContainsKey(key))
@@ -69,6 +134,8 @@ namespace PanGu.Dict
                             wordLenArray.CopyTo(temp, 0);
                             wordLenArray = temp;
                             wordLenArray[i] = (byte)key.Length;
+
+                            _FirstCharDict[key[0]] = wordLenArray;
                         }
                     }
 
@@ -81,7 +148,7 @@ namespace PanGu.Dict
         static public WordDictionaryFile LoadFromBinFile(String fileName)
         {
             WordDictionaryFile dictFile = new WordDictionaryFile();
-            dictFile.Dicts = new List<WordInfo>();
+            dictFile.Dicts = new List<WordAttribute>();
 
             FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read);
 
@@ -99,15 +166,15 @@ namespace PanGu.Dict
 
                 buf = new byte[length];
 
-                WordInfo dict = new WordInfo();
-
                 fs.Read(buf, 0, buf.Length);
 
-                dict.Word = Encoding.UTF8.GetString(buf, 0, length - sizeof(int) - sizeof(double));
+                string word = Encoding.UTF8.GetString(buf, 0, length - sizeof(int) - sizeof(double));
+                int pos = BitConverter.ToInt32(buf, length - sizeof(int) - sizeof(double));
+                double frequency = BitConverter.ToDouble(buf, length - sizeof(double));
+
+                WordAttribute dict = new WordAttribute(word, pos, frequency);
                 string.Intern(dict.Word);
 
-                dict.Pos = BitConverter.ToInt32(buf, length - sizeof(int) - sizeof(double));
-                dict.Frequency = BitConverter.ToDouble(buf, length - sizeof(double));
                 dictFile.Dicts.Add(dict);
             }
 
