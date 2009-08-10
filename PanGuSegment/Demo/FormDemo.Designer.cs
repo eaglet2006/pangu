@@ -28,60 +28,352 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.button1 = new System.Windows.Forms.Button();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.textBox2 = new System.Windows.Forms.TextBox();
-            this.button2 = new System.Windows.Forms.Button();
+            this.label10 = new System.Windows.Forms.Label();
+            this.label14 = new System.Windows.Forms.Label();
+            this.numericUpDownRedundancy = new System.Windows.Forms.NumericUpDown();
+            this.checkBoxMultiSelect = new System.Windows.Forms.CheckBox();
+            this.buttonSaveConfig = new System.Windows.Forms.Button();
+            this.numericUpDownUnknownWordsThreshold = new System.Windows.Forms.NumericUpDown();
+            this.checkBoxFreqFirst = new System.Windows.Forms.CheckBox();
+            this.checkBoxDisplayPosition = new System.Windows.Forms.CheckBox();
+            this.checkBoxFilterStopWords = new System.Windows.Forms.CheckBox();
+            this.checkBoxMatchName = new System.Windows.Forms.CheckBox();
+            this.linkLabel2 = new System.Windows.Forms.LinkLabel();
+            this.label9 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.labelSrcLength = new System.Windows.Forms.Label();
+            this.labelRegRate = new System.Windows.Forms.Label();
+            this.labelSegTime = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.buttonSegment = new System.Windows.Forms.Button();
+            this.label2 = new System.Windows.Forms.Label();
+            this.textBoxSegwords = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.textBoxSource = new System.Windows.Forms.TextBox();
+            this.checkBoxForceSingleWord = new System.Windows.Forms.CheckBox();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownRedundancy)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownUnknownWordsThreshold)).BeginInit();
             this.SuspendLayout();
             // 
-            // button1
+            // label10
             // 
-            this.button1.Location = new System.Drawing.Point(440, 27);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 25);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(7, 41);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(55, 13);
+            this.label10.TabIndex = 88;
+            this.label10.Text = "项目首页";
             // 
-            // textBox1
+            // label14
             // 
-            this.textBox1.Location = new System.Drawing.Point(45, 27);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(389, 20);
-            this.textBox1.TabIndex = 1;
-            this.textBox1.Text = "..\\Dictionaries";
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(688, 572);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(43, 13);
+            this.label14.TabIndex = 87;
+            this.label14.Text = "冗余度";
             // 
-            // textBox2
+            // numericUpDownRedundancy
             // 
-            this.textBox2.Location = new System.Drawing.Point(45, 69);
-            this.textBox2.Multiline = true;
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(470, 347);
-            this.textBox2.TabIndex = 2;
+            this.numericUpDownRedundancy.Location = new System.Drawing.Point(743, 567);
+            this.numericUpDownRedundancy.Maximum = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            this.numericUpDownRedundancy.Name = "numericUpDownRedundancy";
+            this.numericUpDownRedundancy.Size = new System.Drawing.Size(52, 20);
+            this.numericUpDownRedundancy.TabIndex = 86;
+            this.numericUpDownRedundancy.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             // 
-            // button2
+            // checkBoxMultiSelect
             // 
-            this.button2.Location = new System.Drawing.Point(45, 435);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 3;
-            this.button2.Text = "button2";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.checkBoxMultiSelect.AutoSize = true;
+            this.checkBoxMultiSelect.Location = new System.Drawing.Point(595, 569);
+            this.checkBoxMultiSelect.Name = "checkBoxMultiSelect";
+            this.checkBoxMultiSelect.Size = new System.Drawing.Size(74, 17);
+            this.checkBoxMultiSelect.TabIndex = 85;
+            this.checkBoxMultiSelect.Text = "多元分词";
+            this.checkBoxMultiSelect.UseVisualStyleBackColor = true;
+            // 
+            // buttonSaveConfig
+            // 
+            this.buttonSaveConfig.Location = new System.Drawing.Point(91, 567);
+            this.buttonSaveConfig.Name = "buttonSaveConfig";
+            this.buttonSaveConfig.Size = new System.Drawing.Size(75, 25);
+            this.buttonSaveConfig.TabIndex = 84;
+            this.buttonSaveConfig.Text = "保存配置";
+            this.buttonSaveConfig.UseVisualStyleBackColor = true;
+            // 
+            // numericUpDownUnknownWordsThreshold
+            // 
+            this.numericUpDownUnknownWordsThreshold.Location = new System.Drawing.Point(865, 697);
+            this.numericUpDownUnknownWordsThreshold.Maximum = new decimal(new int[] {
+            10000000,
+            0,
+            0,
+            0});
+            this.numericUpDownUnknownWordsThreshold.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numericUpDownUnknownWordsThreshold.Name = "numericUpDownUnknownWordsThreshold";
+            this.numericUpDownUnknownWordsThreshold.Size = new System.Drawing.Size(52, 20);
+            this.numericUpDownUnknownWordsThreshold.TabIndex = 80;
+            this.numericUpDownUnknownWordsThreshold.Value = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            // 
+            // checkBoxFreqFirst
+            // 
+            this.checkBoxFreqFirst.AutoSize = true;
+            this.checkBoxFreqFirst.Checked = true;
+            this.checkBoxFreqFirst.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxFreqFirst.Location = new System.Drawing.Point(494, 570);
+            this.checkBoxFreqFirst.Name = "checkBoxFreqFirst";
+            this.checkBoxFreqFirst.Size = new System.Drawing.Size(98, 17);
+            this.checkBoxFreqFirst.TabIndex = 78;
+            this.checkBoxFreqFirst.Text = "优先判断词频";
+            this.checkBoxFreqFirst.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxDisplayPosition
+            // 
+            this.checkBoxDisplayPosition.AutoSize = true;
+            this.checkBoxDisplayPosition.Location = new System.Drawing.Point(387, 570);
+            this.checkBoxDisplayPosition.Name = "checkBoxDisplayPosition";
+            this.checkBoxDisplayPosition.Size = new System.Drawing.Size(98, 17);
+            this.checkBoxDisplayPosition.TabIndex = 76;
+            this.checkBoxDisplayPosition.Text = "显示单词位置";
+            this.checkBoxDisplayPosition.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxFilterStopWords
+            // 
+            this.checkBoxFilterStopWords.AutoSize = true;
+            this.checkBoxFilterStopWords.Location = new System.Drawing.Point(298, 570);
+            this.checkBoxFilterStopWords.Name = "checkBoxFilterStopWords";
+            this.checkBoxFilterStopWords.Size = new System.Drawing.Size(86, 17);
+            this.checkBoxFilterStopWords.TabIndex = 74;
+            this.checkBoxFilterStopWords.Text = "过滤停用词";
+            this.checkBoxFilterStopWords.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxMatchName
+            // 
+            this.checkBoxMatchName.AutoSize = true;
+            this.checkBoxMatchName.Checked = true;
+            this.checkBoxMatchName.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxMatchName.Location = new System.Drawing.Point(191, 570);
+            this.checkBoxMatchName.Name = "checkBoxMatchName";
+            this.checkBoxMatchName.Size = new System.Drawing.Size(98, 17);
+            this.checkBoxMatchName.TabIndex = 73;
+            this.checkBoxMatchName.Text = "识别中文人名";
+            this.checkBoxMatchName.UseVisualStyleBackColor = true;
+            // 
+            // linkLabel2
+            // 
+            this.linkLabel2.AutoSize = true;
+            this.linkLabel2.Location = new System.Drawing.Point(67, 41);
+            this.linkLabel2.Name = "linkLabel2";
+            this.linkLabel2.Size = new System.Drawing.Size(206, 13);
+            this.linkLabel2.TabIndex = 72;
+            this.linkLabel2.TabStop = true;
+            this.linkLabel2.Text = "http://www.codeplex.com/pangusegment";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(7, 12);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(444, 13);
+            this.label9.TabIndex = 70;
+            this.label9.Text = "盘古中英文分词组件是由eaglet开发的一款基于 .Net Framework 2.0的轻量级分词组件";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(189, 539);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(33, 13);
+            this.label3.TabIndex = 69;
+            this.label3.Text = "chars";
+            // 
+            // labelSrcLength
+            // 
+            this.labelSrcLength.AutoSize = true;
+            this.labelSrcLength.Location = new System.Drawing.Point(112, 540);
+            this.labelSrcLength.Name = "labelSrcLength";
+            this.labelSrcLength.Size = new System.Drawing.Size(13, 13);
+            this.labelSrcLength.TabIndex = 68;
+            this.labelSrcLength.Text = "0";
+            // 
+            // labelRegRate
+            // 
+            this.labelRegRate.AutoSize = true;
+            this.labelRegRate.Location = new System.Drawing.Point(502, 540);
+            this.labelRegRate.Name = "labelRegRate";
+            this.labelRegRate.Size = new System.Drawing.Size(13, 13);
+            this.labelRegRate.TabIndex = 67;
+            this.labelRegRate.Text = "0";
+            // 
+            // labelSegTime
+            // 
+            this.labelSegTime.AutoSize = true;
+            this.labelSegTime.Location = new System.Drawing.Point(296, 540);
+            this.labelSegTime.Name = "labelSegTime";
+            this.labelSegTime.Size = new System.Drawing.Size(13, 13);
+            this.labelSegTime.TabIndex = 66;
+            this.labelSegTime.Text = "0";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(616, 539);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(43, 13);
+            this.label8.TabIndex = 65;
+            this.label8.Text = "chars/s";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(416, 540);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(12, 13);
+            this.label7.TabIndex = 64;
+            this.label7.Text = "s";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(433, 540);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(55, 13);
+            this.label6.TabIndex = 63;
+            this.label6.Text = "分词速度";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(228, 540);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(55, 13);
+            this.label5.TabIndex = 62;
+            this.label5.Text = "分词时间";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(29, 540);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(79, 13);
+            this.label4.TabIndex = 61;
+            this.label4.Text = "源字符串长度";
+            // 
+            // buttonSegment
+            // 
+            this.buttonSegment.Location = new System.Drawing.Point(10, 567);
+            this.buttonSegment.Name = "buttonSegment";
+            this.buttonSegment.Size = new System.Drawing.Size(75, 25);
+            this.buttonSegment.TabIndex = 60;
+            this.buttonSegment.Text = "分词";
+            this.buttonSegment.UseVisualStyleBackColor = true;
+            this.buttonSegment.Click += new System.EventHandler(this.buttonSegment_Click);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(7, 289);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(55, 13);
+            this.label2.TabIndex = 59;
+            this.label2.Text = "分词结果";
+            // 
+            // textBoxSegwords
+            // 
+            this.textBoxSegwords.Location = new System.Drawing.Point(1, 315);
+            this.textBoxSegwords.Multiline = true;
+            this.textBoxSegwords.Name = "textBoxSegwords";
+            this.textBoxSegwords.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.textBoxSegwords.Size = new System.Drawing.Size(906, 212);
+            this.textBoxSegwords.TabIndex = 58;
+            this.textBoxSegwords.TabStop = false;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(7, 68);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(31, 13);
+            this.label1.TabIndex = 57;
+            this.label1.Text = "源文";
+            // 
+            // textBoxSource
+            // 
+            this.textBoxSource.Location = new System.Drawing.Point(1, 84);
+            this.textBoxSource.MaxLength = 327670000;
+            this.textBoxSource.Multiline = true;
+            this.textBoxSource.Name = "textBoxSource";
+            this.textBoxSource.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.textBoxSource.Size = new System.Drawing.Size(906, 187);
+            this.textBoxSource.TabIndex = 56;
+            // 
+            // checkBoxForceSingleWord
+            // 
+            this.checkBoxForceSingleWord.AutoSize = true;
+            this.checkBoxForceSingleWord.Location = new System.Drawing.Point(818, 569);
+            this.checkBoxForceSingleWord.Name = "checkBoxForceSingleWord";
+            this.checkBoxForceSingleWord.Size = new System.Drawing.Size(98, 17);
+            this.checkBoxForceSingleWord.TabIndex = 89;
+            this.checkBoxForceSingleWord.Text = "强制一元分词";
+            this.checkBoxForceSingleWord.UseVisualStyleBackColor = true;
             // 
             // FormDemo
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(578, 472);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.textBox2);
-            this.Controls.Add(this.textBox1);
-            this.Controls.Add(this.button1);
+            this.ClientSize = new System.Drawing.Size(954, 600);
+            this.Controls.Add(this.checkBoxForceSingleWord);
+            this.Controls.Add(this.label10);
+            this.Controls.Add(this.label14);
+            this.Controls.Add(this.numericUpDownRedundancy);
+            this.Controls.Add(this.checkBoxMultiSelect);
+            this.Controls.Add(this.buttonSaveConfig);
+            this.Controls.Add(this.numericUpDownUnknownWordsThreshold);
+            this.Controls.Add(this.checkBoxFreqFirst);
+            this.Controls.Add(this.checkBoxDisplayPosition);
+            this.Controls.Add(this.checkBoxFilterStopWords);
+            this.Controls.Add(this.checkBoxMatchName);
+            this.Controls.Add(this.linkLabel2);
+            this.Controls.Add(this.label9);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.labelSrcLength);
+            this.Controls.Add(this.labelRegRate);
+            this.Controls.Add(this.labelSegTime);
+            this.Controls.Add(this.label8);
+            this.Controls.Add(this.label7);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.buttonSegment);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.textBoxSegwords);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.textBoxSource);
             this.Name = "FormDemo";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.FormDemo_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownRedundancy)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownUnknownWordsThreshold)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -89,10 +381,34 @@
 
         #endregion
 
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.TextBox textBox2;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.NumericUpDown numericUpDownRedundancy;
+        private System.Windows.Forms.CheckBox checkBoxMultiSelect;
+        private System.Windows.Forms.Button buttonSaveConfig;
+        private System.Windows.Forms.NumericUpDown numericUpDownUnknownWordsThreshold;
+        private System.Windows.Forms.CheckBox checkBoxFreqFirst;
+        private System.Windows.Forms.CheckBox checkBoxDisplayPosition;
+        private System.Windows.Forms.CheckBox checkBoxFilterStopWords;
+        private System.Windows.Forms.CheckBox checkBoxMatchName;
+        private System.Windows.Forms.LinkLabel linkLabel2;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label labelSrcLength;
+        private System.Windows.Forms.Label labelRegRate;
+        private System.Windows.Forms.Label labelSegTime;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Button buttonSegment;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TextBox textBoxSegwords;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox textBoxSource;
+        private System.Windows.Forms.CheckBox checkBoxForceSingleWord;
+
     }
 }
 

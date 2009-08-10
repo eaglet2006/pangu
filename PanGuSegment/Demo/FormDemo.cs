@@ -22,7 +22,9 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using System.Diagnostics;
 
+using PanGu;
 using PanGu.Dict;
 
 namespace Demo
@@ -42,47 +44,123 @@ namespace Demo
             "于北京时间5月10日举行运动会\r\n" +
             "我的和服务必在明天做好";
 
-        WordDictionary _WordDict = new WordDictionary();
+        private PanGu.Match.MatchOptions _Options;
+        private PanGu.Match.MatchParameter _Parameters;
 
         public FormDemo()
         {
             InitializeComponent();
         }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            string dir = textBox1.Text;
-            string currentDir = System.IO.Directory.GetCurrentDirectory();
-            System.IO.Directory.SetCurrentDirectory(dir);
-            dir = System.IO.Directory.GetCurrentDirectory();
-            System.IO.Directory.SetCurrentDirectory(currentDir);
-
-            string dictFile = PanGu.Framework.Path.AppendDivision(dir, '\\') + "Dict.Dct";
-            _WordDict.Load(dictFile);
-            button1.Enabled = false;
-        }
-
         private void FormDemo_Load(object sender, EventArgs e)
         {
-            textBox2.Text = _InitSource;
-            textBox2.Text = "长春市长春节致辞";
+            textBoxSource.Text = _InitSource;
+            PanGu.Segment.Init();
 
-            string str = "中文化軟體聯盟－ 軟體分類－ 分類瀏覽";
+            PanGu.Match.MatchOptions options = PanGu.Setting.PanGuSettings.Config.MatchOptions;
+            checkBoxFreqFirst.Checked = options.FrequencyFirst;
+            checkBoxFilterStopWords.Checked = options.FilterStopWords;
+            checkBoxMatchName.Checked = options.ChineseNameIdentify;
+            checkBoxMultiSelect.Checked = options.MultiDimensionality;
+            checkBoxForceSingleWord.Checked = options.ForceSingleWord;
+
+            if (checkBoxMultiSelect.Checked)
+            {
+                checkBoxDisplayPosition.Checked = true;
+            }
+
+            PanGu.Match.MatchParameter parameters = PanGu.Setting.PanGuSettings.Config.Parameters;
+
+            numericUpDownRedundancy.Value = parameters.Redundancy;
 
             //str = Microsoft.VisualBasic.Strings.StrConv(str, Microsoft.VisualBasic.VbStrConv.SimplifiedChinese, 0);
 
-
-            foreach (char c in str)
-            {
-                int i = (int)c;
-            }
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void DisplaySegment()
         {
-            PanGu.Framework.AppendList<PositionLength> pls = _WordDict.GetAllMatchs(textBox2.Text);
-            PanGu.Match.ChsFullTextMatch chsMatch = new PanGu.Match.ChsFullTextMatch();
-            chsMatch.Match(pls.Items, textBox2.Text.Length, pls.Count);
+            DisplaySegment(false);
+        }
+
+        private void DisplaySegment(bool showPosition)
+        {
+            Stopwatch watch = new Stopwatch();
+            watch.Start();
+            Segment segment = new Segment();
+            ICollection<WordInfo> words = segment.DoSegment(textBoxSource.Text, _Options, _Parameters);
+
+            watch.Stop();
+
+            labelSrcLength.Text = textBoxSource.Text.Length.ToString();
+
+            labelSegTime.Text = watch.Elapsed.ToString();
+            if (watch.ElapsedMilliseconds == 0)
+            {
+                labelRegRate.Text = "无穷大";
+            }
+            else
+            {
+                labelRegRate.Text = ((double)(textBoxSource.Text.Length / watch.ElapsedMilliseconds) * 1000).ToString();
+            }
+
+            StringBuilder wordsString = new StringBuilder();
+            foreach (WordInfo wordInfo in words)
+            {
+                if (wordInfo == null)
+                {
+                    continue;
+                }
+
+                if (showPosition)
+                {
+
+                    if (PanGu.Setting.PanGuSettings.Config.MatchOptions.MultiDimensionality)
+                    {
+                        wordsString.AppendFormat("{0}({1},{2})/", wordInfo.Word, wordInfo.Position, wordInfo.Rank);
+                    }
+                    else
+                    {
+                        wordsString.AppendFormat("{0}({1})/", wordInfo.Word, wordInfo.Position);
+                    }
+                }
+                else
+                {
+                    wordsString.AppendFormat("{0}/", wordInfo.Word);
+                }
+            }
+
+            textBoxSegwords.Text = wordsString.ToString();
+
+
+        }
+
+        private void DisplaySegmentAndPostion()
+        {
+            DisplaySegment(true);
+
+        }
+
+        private void buttonSegment_Click(object sender, EventArgs e)
+        {
+            _Options = PanGu.Setting.PanGuSettings.Config.GetOptionsCopy();
+            _Parameters = PanGu.Setting.PanGuSettings.Config.GetParameterCopy();
+
+            _Options.FrequencyFirst = checkBoxFreqFirst.Checked;
+            _Options.FilterStopWords = checkBoxFilterStopWords.Checked;
+            _Options.ChineseNameIdentify = checkBoxMatchName.Checked;
+            _Options.MultiDimensionality = checkBoxMultiSelect.Checked;
+            _Options.ForceSingleWord = checkBoxForceSingleWord.Checked;
+
+            _Parameters.Redundancy = (int)numericUpDownRedundancy.Value;
+
+            if (checkBoxDisplayPosition.Checked)
+            {
+                DisplaySegmentAndPostion();
+            }
+            else
+            {
+                DisplaySegment();
+            }
         }
     }
 }

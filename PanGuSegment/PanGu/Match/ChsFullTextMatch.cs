@@ -149,6 +149,13 @@ namespace PanGu.Match
         /// <param name="curIndex">current index of position length list</param>
         private void BuildTree(Dict.PositionLength[] pl, int stringLength, int count, Node parent, int curIndex)
         {
+            //嵌套太多的情况一般很少发生，如果发生，强行中断，以免造成博弈树遍历层次过多
+            //降低系统效率
+            if (_LeafNodeList.Count > 8192)
+            {
+                return;
+            }
+
             if (curIndex < count - 1)
             {
                 if (pl[curIndex + 1].Position == pl[curIndex].Position)
@@ -206,16 +213,119 @@ namespace PanGu.Match
             }
         }
 
-        public LinkedList<WordInfo> Match(PanGu.Dict.PositionLength[] positionLenArr, int stringLength, int count)
+
+        private MatchParameter _Parameters = null;
+        public MatchParameter Parameters
         {
-            LinkedList<WordInfo> result = new LinkedList<WordInfo>();
+            get
+            {
+                return _Parameters;
+            }
+            set
+            {
+                _Parameters = value;
+            }
+        }
+
+        private ICollection<Dict.PositionLength> MergeAllCombinations(int redundancy)
+        {
+            LinkedList<Dict.PositionLength> result = new LinkedList<PanGu.Dict.PositionLength>();
+
+            if ((redundancy == 0 || !_Options.MultiDimensionality) && !_Options.ForceSingleWord)
+            {
+                return _AllCombinations[0];
+            }
+
+            int i = 0;
+
+            LinkedListNode<Dict.PositionLength> cur;
+
+            bool forceOnce = false;
+
+            Loop:
+
+            while (i <= redundancy && i < _AllCombinations.Count)
+            {
+                cur = result.First;
+
+                for (int j = 0; j < _AllCombinations[i].Length; j++)
+                {
+                    _AllCombinations[i][j].Level = i;
+
+                    if (cur != null)
+                    {
+                        while (cur.Value.Position < _AllCombinations[i][j].Position)
+                        {
+                            cur = cur.Next;
+
+                            if (cur == null)
+                            {
+                                break;
+                            }
+                        }
+
+                        if (cur != null)
+                        {
+                            if (cur.Value.Position != _AllCombinations[i][j].Position ||
+                                cur.Value.Length != _AllCombinations[i][j].Length)
+                            {
+                                result.AddBefore(cur, _AllCombinations[i][j]);
+                            }
+                        }
+                        else
+                        {
+                            result.AddLast(_AllCombinations[i][j]);
+                        }
+                    }
+                    else
+                    {
+                        result.AddLast(_AllCombinations[i][j]);
+                    }
+                }
+
+                i++;
+            }
+
+            if (_Options.ForceSingleWord && !forceOnce)
+            {
+                i = _AllCombinations.Count - 1;
+                redundancy = i;
+                forceOnce = true;
+                goto Loop;
+            }
+
+            return result;
+        }
+
+        public SuperLinkedList<WordInfo> Match(PanGu.Dict.PositionLength[] positionLenArr, string orginalText, int count)
+        {
+            if (_Options == null)
+            {
+                _Options = Setting.PanGuSettings.Config.MatchOptions;
+            }
+
+            if (_Parameters == null)
+            {
+                _Parameters = Setting.PanGuSettings.Config.Parameters;
+            }
+
+            int[] masks = new int[orginalText.Length];
+            int redundancy = _Parameters.Redundancy;
+
+            SuperLinkedList<WordInfo> result = new SuperLinkedList<WordInfo>();
 
             if (count == 0)
             {
+                WordInfo wi = new WordInfo();
+                wi.Word = orginalText;
+                wi.Position = 0;
+                wi.WordType = WordType.None;
+                wi.Rank = 1;
+                result.AddFirst(wi);
                 return result;
             }
 
-            BuildTree(positionLenArr, stringLength, count, _Root, 0);
+            BuildTree(positionLenArr, orginalText.Length, count, _Root, 0);
 
             Node[] leafNodeArray = _LeafNodeList.Items;
 
@@ -223,9 +333,10 @@ namespace PanGu.Match
                 _LeafNodeList.Count, (int)Math.Min(TopRecord, _LeafNodeList.Count), new NodeComparer());
 
             int j = 0;
+            // 获取前TopRecord个单词序列
             foreach (Node node in leafNodeArray)
             {
-                if (j >= TopRecord)
+                if (j >= TopRecord || j >= _LeafNodeList.Count)
                 {
                     break;
                 }
@@ -246,6 +357,128 @@ namespace PanGu.Match
 
                 j++;
             }
+
+            //Force single word
+            //强制一元分词
+            if (_Options.ForceSingleWord)
+            {
+                Dict.PositionLength[] comb = new PanGu.Dict.PositionLength[orginalText.Length];
+
+                for (int i = 0; i < comb.Length; i++)
+                {
+                    PanGu.Dict.PositionLength pl = new PanGu.Dict.PositionLength(i, 1, new WordAttribute(orginalText[i].ToString(), POS.POS_UNK, 0));
+                    pl.Level = 3;
+                    comb[i] = pl;
+                }
+
+                _AllCombinations.Add(comb);
+            }
+
+            if (_AllCombinations.Count > 0)
+            {
+                ICollection<Dict.PositionLength> positionCollection = MergeAllCombinations(redundancy);
+
+                foreach(Dict.PositionLength pl in positionCollection)
+                //for (int i = 0; i < _AllCombinations[0].Length; i++)
+                {
+                    //result.AddLast(new WordInfo(_AllCombinations[0][i], orginalText));
+                    result.AddLast(new WordInfo(pl, orginalText));
+                    if (pl.Length > 1)
+                    {
+                        for (int k = pl.Position;
+                            k < pl.Position + pl.Length; k++)
+                        {
+                            masks[k] = 2;
+                        }
+                    }
+                    else
+                    {
+                        masks[pl.Position] = 1;
+                    }
+                }
+            }
+
+            #region 合并未登录词
+
+            List<WordInfo> unknownWords = new List<WordInfo>();
+
+            //找到所有未登录词
+            j = 0;
+            bool begin = false;
+            int beginPosition = 0;
+            while (j < masks.Length)
+            {
+                if (!begin)
+                {
+                    if (masks[j] == 0)
+                    {
+                        begin = true;
+                        beginPosition = j;
+                    }
+                }
+                else
+                {
+                    if (masks[j] != 0)
+                    {
+                        begin = false;
+                        string word = orginalText.Substring(beginPosition, 
+                            j - beginPosition);
+                        WordInfo wi = new WordInfo();
+                        wi.Word = word;
+                        wi.Position = beginPosition;
+                        wi.WordType = WordType.None;
+                        wi.Rank = _Parameters.UnknowRank;
+                        unknownWords.Add(wi);
+                    }
+
+                }
+
+                j++;
+            }
+
+            if (begin)
+            {
+                begin = false;
+                string word = orginalText.Substring(beginPosition,
+                    j - beginPosition);
+                WordInfo wi = new WordInfo();
+                wi.Word = word;
+                wi.Position = beginPosition;
+                wi.WordType = WordType.None;
+                wi.Rank = _Parameters.UnknowRank;
+                unknownWords.Add(wi);
+            }
+
+            //合并到结果序列的对应位置中
+            if (unknownWords.Count > 0)
+            {
+                SuperLinkedListNode<WordInfo> cur = result.First;
+                j = 0;
+
+                while (cur != null)
+                {
+                    if (cur.Value.Position >= unknownWords[j].Position)
+                    {
+                        result.AddBefore(cur, unknownWords[j]);
+                        j++;
+                        if (j >= unknownWords.Count)
+                        {
+                            break;
+                        }
+                    }
+
+                    cur = cur.Next;
+                }
+
+                while (j < unknownWords.Count)
+                {
+                    result.AddLast(unknownWords[j]);
+                    j++;
+                }
+            }
+            #endregion
+
+
 
             return result;
         }

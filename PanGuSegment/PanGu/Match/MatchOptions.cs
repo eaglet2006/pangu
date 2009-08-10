@@ -22,5 +22,21 @@ namespace PanGu.Match
         /// 多元分词
         /// </summary>
         public bool MultiDimensionality = true;
+
+        /// <summary>
+        /// 过滤停用词
+        /// </summary>
+        public bool FilterStopWords = true;
+
+        /// <summary>
+        /// 忽略空格、回车、Tab
+        /// </summary>
+        public bool IgnoreSpace = true;
+
+        /// <summary>
+        /// 强制一元分词
+        /// </summary>
+        public bool ForceSingleWord = false;
+
     }
 }

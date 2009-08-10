@@ -93,15 +93,9 @@ namespace PanGu.Framework
         }
 
         static public bool GetSingleMatchStrings(String text, String regx,
-            bool ignoreCase, ref ArrayList output)
+            bool ignoreCase, out List<string> output)
         {
-            if (output == null)
-            {
-                Debug.Assert(false);
-                return false;
-            }
-
-            output.Clear();
+            output = new List<string>();
 
             System.Text.RegularExpressions.Regex reg;
 

@@ -170,7 +170,7 @@ namespace PanGu.Framework
                 if (typeof(T) != typeof(int) &&
                     typeof(T) != typeof(long))
                 {
-                    Array.Sort(array);
+                    Array.Sort(array, 0, arrayLen);
                     return;
                 }
             }
@@ -178,7 +178,7 @@ namespace PanGu.Framework
             //Judge input
             if (arrayLen <= 2 || top >= arrayLen / 2)
             {
-                Array.Sort(array, comparer);
+                Array.Sort(array,0, arrayLen, comparer);
                 return;
             }
 

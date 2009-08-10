@@ -14,6 +14,7 @@ namespace PanGu.Dict
 
     public struct PositionLength
     {
+        public int Level ;
         public int Position;
         public int Length;
         public WordAttribute WordAttr;
@@ -23,6 +24,7 @@ namespace PanGu.Dict
             this.Position = position;
             this.Length = length;
             this.WordAttr = wordAttr;
+            this.Level = 0;
         }
     }
 
@@ -35,7 +37,9 @@ namespace PanGu.Dict
 
         Dictionary<char, byte[]> _FirstCharDict = new Dictionary<char,byte[]>();
 
-        public Framework.AppendList<PositionLength> GetAllMatchs(string text)
+        internal Match.ChsName ChineseName = null;
+
+        public Framework.AppendList<PositionLength> GetAllMatchs(string text, bool chineseNameIdentify)
         {
             Framework.AppendList<PositionLength> result = new PanGu.Framework.AppendList<PositionLength>();
 
@@ -57,6 +61,23 @@ namespace PanGu.Dict
                 byte[] lenList;
                 char fst = keyText[i];
 
+                List<string> chsNames = null;
+
+                if (chineseNameIdentify)
+                {
+                    chsNames = ChineseName.Match(text, i);
+
+                    if (chsNames != null)
+                    {
+                        foreach (string name in chsNames)
+                        {
+                            WordAttribute wa = new WordAttribute(name, POS.POS_A_NR, 0);
+
+                            result.Add(new PositionLength(i, name.Length, wa));
+                        }
+                    }
+                }
+
                 if (_FirstCharDict.TryGetValue(fst, out lenList))
                 {
                     foreach (byte len in lenList)
@@ -76,6 +97,25 @@ namespace PanGu.Dict
                         WordAttribute wa;
                         if (_WordDict.TryGetValue(key, out wa))
                         {
+                            if (chsNames != null)
+                            {
+                                bool find = false;
+
+                                foreach (string name in chsNames)
+                                {
+                                    if (wa.Word == name)
+                                    {
+                                        find = true;
+                                        break;
+                                    }
+                                }
+
+                                if (find)
+                                {
+                                    continue;
+                                }
+                            }
+
                             result.Add(new PositionLength(i, len, wa));
                         }
                     }
@@ -169,7 +209,7 @@ namespace PanGu.Dict
                 fs.Read(buf, 0, buf.Length);
 
                 string word = Encoding.UTF8.GetString(buf, 0, length - sizeof(int) - sizeof(double));
-                int pos = BitConverter.ToInt32(buf, length - sizeof(int) - sizeof(double));
+                POS pos = (POS)BitConverter.ToInt32(buf, length - sizeof(int) - sizeof(double));
                 double frequency = BitConverter.ToDouble(buf, length - sizeof(double));
 
                 WordAttribute dict = new WordAttribute(word, pos, frequency);

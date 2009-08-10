@@ -33,7 +33,7 @@ namespace PanGu
         /// <summary>
         /// Part of speech
         /// </summary>
-        public int Pos;
+        public POS Pos;
 
         /// <summary>
         /// Frequency for this word
@@ -45,7 +45,7 @@ namespace PanGu
 
         }
 
-        public WordAttribute(string word, int pos, double frequency)
+        public WordAttribute(string word, POS pos, double frequency)
         {
             this.Word = word;
             this.Pos = pos;
