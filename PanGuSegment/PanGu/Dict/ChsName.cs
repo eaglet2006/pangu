@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace PanGu.Match
+namespace PanGu.Dict
 {
     /// <summary>
     /// 匹配中文人名

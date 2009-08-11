@@ -63,6 +63,8 @@ namespace Demo
             checkBoxMatchName.Checked = options.ChineseNameIdentify;
             checkBoxMultiSelect.Checked = options.MultiDimensionality;
             checkBoxForceSingleWord.Checked = options.ForceSingleWord;
+            checkBoxTraditionalChs.Checked = options.TraditionalChineseEnabled;
+            checkBoxST.Checked = options.OutputSimplifiedTraditional;
 
             if (checkBoxMultiSelect.Checked)
             {
@@ -137,7 +139,6 @@ namespace Demo
         private void DisplaySegmentAndPostion()
         {
             DisplaySegment(true);
-
         }
 
         private void buttonSegment_Click(object sender, EventArgs e)
@@ -150,6 +151,8 @@ namespace Demo
             _Options.ChineseNameIdentify = checkBoxMatchName.Checked;
             _Options.MultiDimensionality = checkBoxMultiSelect.Checked;
             _Options.ForceSingleWord = checkBoxForceSingleWord.Checked;
+            _Options.TraditionalChineseEnabled = checkBoxTraditionalChs.Checked;
+            _Options.OutputSimplifiedTraditional = checkBoxST.Checked;
 
             _Parameters.Redundancy = (int)numericUpDownRedundancy.Value;
 

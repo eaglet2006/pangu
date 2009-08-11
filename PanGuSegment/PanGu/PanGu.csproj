@@ -31,6 +31,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -50,7 +51,7 @@
     <Compile Include="Framework\SuperLinkedList.cs" />
     <Compile Include="Framework\XmlSerialization.cs" />
     <Compile Include="Match\ChsFullTextMatch.cs" />
-    <Compile Include="Match\ChsName.cs" />
+    <Compile Include="Dict\ChsName.cs" />
     <Compile Include="Match\IChsFullTextMatch.cs" />
     <Compile Include="Match\MatchOptions.cs" />
     <Compile Include="Match\MatchParameter.cs" />

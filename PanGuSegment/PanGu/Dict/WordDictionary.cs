@@ -37,7 +37,21 @@ namespace PanGu.Dict
 
         Dictionary<char, byte[]> _FirstCharDict = new Dictionary<char,byte[]>();
 
-        internal Match.ChsName ChineseName = null;
+        internal Dict.ChsName ChineseName = null;
+
+        public WordAttribute GetWordAttr(string word)
+        {
+            WordAttribute wa;
+
+            if (_WordDict.TryGetValue(word.ToLower(), out wa))
+            {
+                return wa;
+            }
+            else
+            {
+                return null;
+            }
+        }
 
         public Framework.AppendList<PositionLength> GetAllMatchs(string text, bool chineseNameIdentify)
         {

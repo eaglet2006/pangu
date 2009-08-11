@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("PanGu")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("doudou")]
+[assembly: AssemblyCompany("PanGu Segment")]
 [assembly: AssemblyProduct("PanGu")]
-[assembly: AssemblyCopyright("Copyright © doudou 2009")]
+[assembly: AssemblyCopyright("Copyright © eaglet 2009")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

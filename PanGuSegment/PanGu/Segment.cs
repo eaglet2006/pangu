@@ -35,7 +35,7 @@ namespace PanGu
         static object _LockObj = new object();
 
         static Dict.WordDictionary _WordDictionary = null;
-        static Match.ChsName _ChsName = null;
+        static Dict.ChsName _ChsName = null;
 
         private Match.MatchOptions _Options;
         private Match.MatchParameter _Parameters;
@@ -43,103 +43,6 @@ namespace PanGu
 
 
         #region Merge functions
-        /// <summary>
-        /// 合并浮点数
-        /// </summary>
-        /// <param name="words"></param>
-        /// <param name="start"></param>
-        /// <param name="end"></param>
-        /// <returns></returns>
-        //private String MergeFloat(ArrayList words, int start, ref int end)
-        //{
-        //    StringBuilder str = new StringBuilder();
-
-        //    int dotCount = 0;
-        //    end = start;
-        //    int i ;
-
-        //    for (i = start; i < words.Count; i++)
-        //    {
-        //        string word = (string)words[i];
-
-        //        if (word == "")
-        //        {
-        //            break;
-        //        }
-                
-        //        if ((word[0] >= '0' && word[0] <= '9')
-        //            || (word[0] >= '０' && word[0] <= '９'))
-        //        {
-        //        }
-        //        else if (word[0] == '.' && dotCount == 0)
-        //        {
-        //            dotCount++;
-        //        }
-        //        else
-        //        {
-        //            break;
-        //        }
-
-        //        str.Append(word);
-        //    }
-
-        //    end = i;
-
-        //    return str.ToString();
-        //}
-
-        /// <summary>
-        /// 合并Email
-        /// </summary>
-        /// <param name="words"></param>
-        /// <param name="start"></param>
-        /// <param name="end"></param>
-        /// <returns></returns>
-        //private String MergeEmail(ArrayList words, int start, ref int end)
-        //{
-        //    StringBuilder str = new StringBuilder();
-
-        //    int dotCount = 0;
-        //    int atCount = 0;
-        //    end = start;
-        //    int i;
-
-        //    for (i = start; i < words.Count; i++)
-        //    {
-        //        string word = (string)words[i];
-
-        //        if (word == "")
-        //        {
-        //            break;
-        //        }
-
-        //        if ((word[0] >= 'a' && word[0] <= 'z') ||
-        //            (word[0] >= 'A' && word[0] <= 'Z') ||
-        //            word[0] >= '0' && word[0] <= '9')
-        //        {
-        //            dotCount = 0;
-        //        }
-        //        else if (word[0] == '@' && atCount == 0)
-        //        {
-        //            atCount++;
-        //        }
-        //        else if (word[0] == '.' && dotCount == 0)
-        //        {
-        //            dotCount++;
-        //        }
-        //        else
-        //        {
-        //            break;
-        //        }
-
-        //        str.Append(word);
-
-        //    }
-
-        //    end = i;
-
-        //    return str.ToString();
-        //}
 
         /// <summary>
         /// 合并英文专用词。
@@ -191,6 +94,71 @@ namespace PanGu
         //    return null;
 
         //}
+
+        private bool MergeEnglishSpecialWord(string orginalText, SuperLinkedList<WordInfo> wordInfoList, ref SuperLinkedListNode<WordInfo> current)
+        {
+            SuperLinkedListNode<WordInfo> cur = current;
+
+            cur = cur.Next;
+
+            int last = -1;
+
+            while (cur != null)
+            {
+                if (cur.Value.WordType == WordType.Symbol || cur.Value.WordType == WordType.English)
+                {
+                    last = cur.Value.Position + cur.Value.Word.Length;
+                    cur = cur.Next;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+
+            if (last >= 0)
+            {
+                int first = current.Value.Position;
+
+                string newWord = orginalText.Substring(first, last - first);
+
+                WordAttribute wa = _WordDictionary.GetWordAttr(newWord);
+
+                if (wa == null)
+                {
+                    return false;
+                }
+
+                while (current != cur)
+                {
+                    SuperLinkedListNode<WordInfo> removeItem = current;
+                    current = current.Next;
+                    wordInfoList.Remove(removeItem);
+                }
+
+                WordInfo newWordInfo = new WordInfo(new PanGu.Dict.PositionLength(first, last - first, 
+                    wa), orginalText);
+
+                newWordInfo.WordType = WordType.English;
+                newWordInfo.Rank = _Parameters.EnglishRank;
+
+                if (current == null)
+                {
+                    wordInfoList.AddLast(newWordInfo);
+                }
+                else
+                {
+                    wordInfoList.AddBefore(current, newWordInfo);
+                }
+
+                return true;
+            }
+
+
+            return false;
+
+        }
 
         #endregion
 
@@ -263,17 +231,72 @@ namespace PanGu
 
                 switch (cur.Value.WordType)
                 {
-                    case WordType.SimpleChinese:
+                    case WordType.SimplifiedChinese:
 
-                        PanGu.Framework.AppendList<Dict.PositionLength> pls = _WordDictionary.GetAllMatchs(cur.Value.Word, _Options.ChineseNameIdentify);
+                        string inputText = cur.Value.Word;
+
+                        WordType originalWordType = WordType.SimplifiedChinese;
+
+                        if (_Options.TraditionalChineseEnabled)
+                        {
+                            string simplified = Microsoft.VisualBasic.Strings.StrConv(cur.Value.Word, Microsoft.VisualBasic.VbStrConv.SimplifiedChinese, 0);
+
+                            if (simplified != cur.Value.Word)
+                            {
+                                originalWordType = WordType.TraditionalChinese;
+                                inputText = simplified;
+                            }
+                        }
+
+                        PanGu.Framework.AppendList<Dict.PositionLength> pls = _WordDictionary.GetAllMatchs(inputText, _Options.ChineseNameIdentify);
                         PanGu.Match.ChsFullTextMatch chsMatch = new PanGu.Match.ChsFullTextMatch();
                         chsMatch.Options = _Options;
                         chsMatch.Parameters = _Parameters;
                         SuperLinkedList<WordInfo> chsMatchWords = chsMatch.Match(pls.Items, cur.Value.Word, pls.Count);
 
-                        foreach (WordInfo wi in chsMatchWords)
+                        SuperLinkedListNode<WordInfo> curChsMatch = chsMatchWords.First;
+                        while (curChsMatch != null)
                         {
+                            WordInfo wi = curChsMatch.Value;
+
                             wi.Position += cur.Value.Position;
+                            wi.OriginalWordType = originalWordType;
+                            wi.WordType = originalWordType;
+
+                            if (_Options.OutputSimplifiedTraditional)
+                            {
+                                if (_Options.TraditionalChineseEnabled)
+                                {
+                                    string newWord;
+                                    WordType wt;
+
+                                    if (originalWordType == WordType.SimplifiedChinese)
+                                    {
+                                        newWord = Microsoft.VisualBasic.Strings.StrConv(wi.Word, 
+                                            Microsoft.VisualBasic.VbStrConv.TraditionalChinese, 0);
+                                        wt = WordType.TraditionalChinese;
+                                    }
+                                    else
+                                    {
+                                        newWord = Microsoft.VisualBasic.Strings.StrConv(wi.Word, 
+                                            Microsoft.VisualBasic.VbStrConv.SimplifiedChinese, 0);
+                                        wt = WordType.SimplifiedChinese;
+                                    }
+
+                                    if (newWord != wi.Word)
+                                    {
+                                        WordInfo newWordInfo = new WordInfo(wi);
+                                        newWordInfo.Word = newWord;
+                                        newWordInfo.OriginalWordType = originalWordType;
+                                        newWordInfo.WordType = wt;
+                                        newWordInfo.Rank = _Parameters.SimplifiedTraditionalRank;
+                                        newWordInfo.Position = wi.Position;
+                                        chsMatchWords.AddBefore(curChsMatch, newWordInfo);
+                                    }
+                                }
+                            }
+
+                            curChsMatch = curChsMatch.Next;
                         }
 
                         SuperLinkedListNode<WordInfo> lst = chsMatchWords.Last;
@@ -285,7 +308,12 @@ namespace PanGu
                         break;
                     case WordType.English:
                         cur.Value.Rank = Setting.PanGuSettings.Config.Parameters.EnglishRank;
-                        cur = cur.Next;
+
+                        if (!MergeEnglishSpecialWord(text, result, ref cur))
+                        {
+                            cur = cur.Next;
+                        }
+
                         break;
                     case WordType.Numeric:
                         cur.Value.Rank = Setting.PanGuSettings.Config.Parameters.NumericRank;
@@ -372,7 +400,7 @@ namespace PanGu
             _WordDictionary = new PanGu.Dict.WordDictionary();
             _WordDictionary.Load(Setting.PanGuSettings.Config.GetDictionaryPath() + "Dict.Dct");
 
-            _ChsName = new PanGu.Match.ChsName();
+            _ChsName = new PanGu.Dict.ChsName();
             _ChsName.LoadChsName(Setting.PanGuSettings.Config.GetDictionaryPath());
 
             _WordDictionary.ChineseName = _ChsName;

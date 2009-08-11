@@ -38,5 +38,16 @@ namespace PanGu.Match
         /// </summary>
         public bool ForceSingleWord = false;
 
+        /// <summary>
+        /// 繁体中文开关
+        /// </summary>
+        public bool TraditionalChineseEnabled = false;
+
+        /// <summary>
+        /// 同时输出简体和繁体
+        /// </summary>
+        public bool OutputSimplifiedTraditional = false;
+
+
     }
 }

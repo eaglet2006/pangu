@@ -8,7 +8,7 @@ namespace PanGu
     {
         None = 0,
         English = 1,
-        SimpleChinese = 2,
+        SimplifiedChinese = 2,
         TraditionalChinese = 3,
         Numeric = 4,
         Symbol = 5,
@@ -60,7 +60,7 @@ namespace PanGu
             this.Word = oringinalText.Substring(pl.Position, pl.Length);
             this.Pos = pl.WordAttr.Pos;
             this.Frequency = pl.WordAttr.Frequency;
-            this.WordType = WordType.SimpleChinese;
+            this.WordType = WordType.SimplifiedChinese;
             this.Position = pl.Position;
 
             switch (pl.Level)

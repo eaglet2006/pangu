@@ -76,5 +76,11 @@ namespace PanGu.Match
         /// 符号的权值
         /// </summary>
         public int SymbolRank = 1;
+
+        /// <summary>
+        /// 强制同时输出简繁汉字时，非原来文本的汉字输出权值。
+        /// 比如原来文本是简体，这里就是输出的繁体字的权值，反之亦然。
+        /// </summary>
+        public int SimplifiedTraditionalRank = 1;
     }
 }

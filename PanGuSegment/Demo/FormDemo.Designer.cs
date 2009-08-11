@@ -55,6 +55,8 @@
             this.label1 = new System.Windows.Forms.Label();
             this.textBoxSource = new System.Windows.Forms.TextBox();
             this.checkBoxForceSingleWord = new System.Windows.Forms.CheckBox();
+            this.checkBoxTraditionalChs = new System.Windows.Forms.CheckBox();
+            this.checkBoxST = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownRedundancy)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownUnknownWordsThreshold)).BeginInit();
             this.SuspendLayout();
@@ -71,7 +73,7 @@
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(688, 572);
+            this.label14.Location = new System.Drawing.Point(294, 593);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(43, 13);
             this.label14.TabIndex = 87;
@@ -79,7 +81,7 @@
             // 
             // numericUpDownRedundancy
             // 
-            this.numericUpDownRedundancy.Location = new System.Drawing.Point(743, 567);
+            this.numericUpDownRedundancy.Location = new System.Drawing.Point(347, 589);
             this.numericUpDownRedundancy.Maximum = new decimal(new int[] {
             2,
             0,
@@ -97,7 +99,7 @@
             // checkBoxMultiSelect
             // 
             this.checkBoxMultiSelect.AutoSize = true;
-            this.checkBoxMultiSelect.Location = new System.Drawing.Point(595, 569);
+            this.checkBoxMultiSelect.Location = new System.Drawing.Point(191, 593);
             this.checkBoxMultiSelect.Name = "checkBoxMultiSelect";
             this.checkBoxMultiSelect.Size = new System.Drawing.Size(74, 17);
             this.checkBoxMultiSelect.TabIndex = 85;
@@ -330,18 +332,44 @@
             // checkBoxForceSingleWord
             // 
             this.checkBoxForceSingleWord.AutoSize = true;
-            this.checkBoxForceSingleWord.Location = new System.Drawing.Point(818, 569);
+            this.checkBoxForceSingleWord.Location = new System.Drawing.Point(417, 591);
             this.checkBoxForceSingleWord.Name = "checkBoxForceSingleWord";
             this.checkBoxForceSingleWord.Size = new System.Drawing.Size(98, 17);
             this.checkBoxForceSingleWord.TabIndex = 89;
             this.checkBoxForceSingleWord.Text = "强制一元分词";
             this.checkBoxForceSingleWord.UseVisualStyleBackColor = true;
             // 
+            // checkBoxTraditionalChs
+            // 
+            this.checkBoxTraditionalChs.AutoSize = true;
+            this.checkBoxTraditionalChs.Checked = true;
+            this.checkBoxTraditionalChs.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxTraditionalChs.Location = new System.Drawing.Point(599, 568);
+            this.checkBoxTraditionalChs.Name = "checkBoxTraditionalChs";
+            this.checkBoxTraditionalChs.Size = new System.Drawing.Size(86, 17);
+            this.checkBoxTraditionalChs.TabIndex = 90;
+            this.checkBoxTraditionalChs.Text = "繁体字分词";
+            this.checkBoxTraditionalChs.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxST
+            // 
+            this.checkBoxST.AutoSize = true;
+            this.checkBoxST.Checked = true;
+            this.checkBoxST.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxST.Location = new System.Drawing.Point(691, 567);
+            this.checkBoxST.Name = "checkBoxST";
+            this.checkBoxST.Size = new System.Drawing.Size(134, 17);
+            this.checkBoxST.TabIndex = 91;
+            this.checkBoxST.Text = "同时输出简体和繁体";
+            this.checkBoxST.UseVisualStyleBackColor = true;
+            // 
             // FormDemo
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(954, 600);
+            this.ClientSize = new System.Drawing.Size(954, 614);
+            this.Controls.Add(this.checkBoxST);
+            this.Controls.Add(this.checkBoxTraditionalChs);
             this.Controls.Add(this.checkBoxForceSingleWord);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.label14);
@@ -408,6 +436,8 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox textBoxSource;
         private System.Windows.Forms.CheckBox checkBoxForceSingleWord;
+        private System.Windows.Forms.CheckBox checkBoxTraditionalChs;
+        private System.Windows.Forms.CheckBox checkBoxST;
 
     }
 }

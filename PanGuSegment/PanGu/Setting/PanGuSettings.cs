@@ -125,6 +125,9 @@ namespace PanGu.Setting
             options.FilterStopWords = this.MatchOptions.FilterStopWords;
             options.IgnoreSpace = this.MatchOptions.IgnoreSpace;
             options.ForceSingleWord = this.MatchOptions.ForceSingleWord;
+            options.TraditionalChineseEnabled = this.MatchOptions.TraditionalChineseEnabled;
+            options.OutputSimplifiedTraditional = this.MatchOptions.OutputSimplifiedTraditional;
+
             return options;
         }
 

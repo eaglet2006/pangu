@@ -133,7 +133,7 @@ namespace PanGu.Framework
                 case LexicalFunction.OutputChinese:
                     lexical.OutputToken = new WordInfo();
                     GetTextElse(dfa);
-                    lexical.OutputToken.WordType = WordType.SimpleChinese;
+                    lexical.OutputToken.WordType = WordType.SimplifiedChinese;
                     break;
                 case LexicalFunction.Other:
                     lexical.OutputToken = new WordInfo();
