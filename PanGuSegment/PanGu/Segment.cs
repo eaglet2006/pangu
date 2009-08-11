@@ -36,6 +36,7 @@ namespace PanGu
 
         static Dict.WordDictionary _WordDictionary = null;
         static Dict.ChsName _ChsName = null;
+        static Dict.StopWord _StopWord = null;
 
         private Match.MatchOptions _Options;
         private Match.MatchParameter _Parameters;
@@ -335,6 +336,30 @@ namespace PanGu
 
         }
 
+        private void FilterStopWord(SuperLinkedList<WordInfo> wordInfoList)
+        {
+            if (wordInfoList == null)
+            {
+                return;
+            }
+
+            SuperLinkedListNode<WordInfo> cur = wordInfoList.First;
+
+            while (cur != null)
+            {
+                if (_StopWord.IsStopWord(cur.Value.Word))
+                {
+                    SuperLinkedListNode<WordInfo> removeItem = cur;
+                    cur = cur.Next;
+                    wordInfoList.Remove(removeItem);
+                }
+                else
+                {
+                    cur = cur.Next;
+                }
+            }
+        }
+
         #region Public methods
         public ICollection<WordInfo> DoSegment(string text)
         {
@@ -369,12 +394,35 @@ namespace PanGu
                 }
             }
 
-            return PreSegment(text);
+            SuperLinkedList<WordInfo> result = PreSegment(text);
+
+            if (_Options.FilterStopWords)
+            {
+                FilterStopWord(result);
+            }
+
+            return result;
         }
 
         #endregion
 
         #region Initialization
+
+        static private void LoadDictionary()
+        {
+            _WordDictionary = new PanGu.Dict.WordDictionary();
+            string dir = Setting.PanGuSettings.Config.GetDictionaryPath();
+            _WordDictionary.Load(dir + "Dict.Dct");
+
+            _ChsName = new PanGu.Dict.ChsName();
+            _ChsName.LoadChsName(Setting.PanGuSettings.Config.GetDictionaryPath());
+
+            _WordDictionary.ChineseName = _ChsName;
+
+            _StopWord = new PanGu.Dict.StopWord();
+            _StopWord.LoadStopwordsDict(dir + "Stopword.txt");
+        }
+
 
         public static void Init()
         {
@@ -397,14 +445,7 @@ namespace PanGu
                 Setting.SettingLoader loader = new PanGu.Setting.SettingLoader(fileName);
             }
 
-            _WordDictionary = new PanGu.Dict.WordDictionary();
-            _WordDictionary.Load(Setting.PanGuSettings.Config.GetDictionaryPath() + "Dict.Dct");
-
-            _ChsName = new PanGu.Dict.ChsName();
-            _ChsName.LoadChsName(Setting.PanGuSettings.Config.GetDictionaryPath());
-
-            _WordDictionary.ChineseName = _ChsName;
-
+            LoadDictionary();
         }
 
 

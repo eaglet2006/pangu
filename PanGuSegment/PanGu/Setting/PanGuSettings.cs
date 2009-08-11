@@ -144,6 +144,7 @@ namespace PanGu.Setting
             parameter.NumericRank = this.Parameters.NumericRank;
             parameter.EnglishRank = this.Parameters.EnglishRank;
             parameter.SymbolRank = this.Parameters.SymbolRank;
+            parameter.SimplifiedTraditionalRank = this.Parameters.SimplifiedTraditionalRank;
 
             return parameter;
         }
