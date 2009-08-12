@@ -34,10 +34,11 @@ namespace PanGu
 
         static object _LockObj = new object();
 
-        static Dict.WordDictionary _WordDictionary = null;
-        static Dict.ChsName _ChsName = null;
-        static Dict.StopWord _StopWord = null;
+        internal static Dict.WordDictionary _WordDictionary = null;
+        internal static Dict.ChsName _ChsName = null;
+        internal static Dict.StopWord _StopWord = null;
 
+        static Dict.DictionaryLoader _DictLoader;
         private Match.MatchOptions _Options;
         private Match.MatchParameter _Parameters;
         #endregion
@@ -373,35 +374,43 @@ namespace PanGu
 
         public ICollection<WordInfo> DoSegment(string text, Match.MatchOptions options, Match.MatchParameter parameters)
         {
-            _Options = options;
-            _Parameters = parameters;
-
-            if (_Options == null)
+            try
             {
-                _Options = Setting.PanGuSettings.Config.MatchOptions;
-            }
+                Dict.DictionaryLoader.Lock.Enter(PanGu.Framework.Lock.Mode.Share);
+                _Options = options;
+                _Parameters = parameters;
 
-            if (_Parameters == null)
-            {
-                _Parameters = Setting.PanGuSettings.Config.Parameters;
-            }
-
-            lock (_LockObj)
-            {
-                if (Setting.PanGuSettings.Config == null)
+                if (_Options == null)
                 {
-                    Init();
+                    _Options = Setting.PanGuSettings.Config.MatchOptions;
                 }
+
+                if (_Parameters == null)
+                {
+                    _Parameters = Setting.PanGuSettings.Config.Parameters;
+                }
+
+                lock (_LockObj)
+                {
+                    if (Setting.PanGuSettings.Config == null)
+                    {
+                        Init();
+                    }
+                }
+
+                SuperLinkedList<WordInfo> result = PreSegment(text);
+
+                if (_Options.FilterStopWords)
+                {
+                    FilterStopWord(result);
+                }
+
+                return result;
             }
-
-            SuperLinkedList<WordInfo> result = PreSegment(text);
-
-            if (_Options.FilterStopWords)
+            finally
             {
-                FilterStopWord(result);
+                Dict.DictionaryLoader.Lock.Leave();
             }
-
-            return result;
         }
 
         #endregion
@@ -421,6 +430,8 @@ namespace PanGu
 
             _StopWord = new PanGu.Dict.StopWord();
             _StopWord.LoadStopwordsDict(dir + "Stopword.txt");
+
+            _DictLoader = new PanGu.Dict.DictionaryLoader(Setting.PanGuSettings.Config.GetDictionaryPath());
         }
 
 

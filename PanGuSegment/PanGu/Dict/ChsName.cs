@@ -1,4 +1,22 @@
-﻿using System;
+﻿/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -97,9 +115,9 @@ namespace PanGu.Dict
         Dictionary<char, char> _DoubleName1Dict = new Dictionary<char, char>();
         Dictionary<char, char> _DoubleName2Dict = new Dictionary<char, char>();
 
-        const string ChsSingleNameFileName = "ChsSingleName.txt";
-        const string ChsDoubleName1FileName = "ChsDoubleName1.txt";
-        const string ChsDoubleName2FileName = "ChsDoubleName2.txt";
+        public const string ChsSingleNameFileName = "ChsSingleName.txt";
+        public const string ChsDoubleName1FileName = "ChsDoubleName1.txt";
+        public const string ChsDoubleName2FileName = "ChsDoubleName2.txt";
 
 
 
@@ -136,7 +154,7 @@ namespace PanGu.Dict
             }
         }
 
-        private void NameDict(string filePath, ref Dictionary<char, char> dict)
+        private void LoadNameDict(string filePath, ref Dictionary<char, char> dict)
         {
             dict = new Dictionary<char, char>();
 
@@ -162,9 +180,9 @@ namespace PanGu.Dict
         {
             dictPath = Framework.Path.AppendDivision(dictPath, '\\');
 
-            NameDict(dictPath + ChsSingleNameFileName, ref _SingleNameDict);
-            NameDict(dictPath + ChsDoubleName1FileName, ref _DoubleName1Dict);
-            NameDict(dictPath + ChsDoubleName2FileName, ref _DoubleName2Dict);
+            LoadNameDict(dictPath + ChsSingleNameFileName, ref _SingleNameDict);
+            LoadNameDict(dictPath + ChsDoubleName1FileName, ref _DoubleName1Dict);
+            LoadNameDict(dictPath + ChsDoubleName2FileName, ref _DoubleName2Dict);
         }
 
         public List<string> Match(string text, int start)

@@ -83,5 +83,10 @@ namespace PanGu
             }
 
         }
+
+        public int GetEndPositon()
+        {
+            return this.Position + this.Word.Length;
+        }
     }
 }

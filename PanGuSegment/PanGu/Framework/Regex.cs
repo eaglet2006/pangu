@@ -23,7 +23,7 @@ using System.Diagnostics;
 
 namespace PanGu.Framework
 {
-    class Regex
+    public class Regex
     {
         static public bool GetMatchStrings(String text, String regx,
             bool ignoreCase, ref ArrayList output)

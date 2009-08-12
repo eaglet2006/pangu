@@ -1,10 +1,69 @@
-﻿using System;
+﻿/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using System.Diagnostics;
 
 namespace PanGu.Dict
 {
+
+    public class SearchWordResult : IComparable
+    {
+        /// <summary>
+        /// 单词
+        /// </summary>
+        public WordAttribute Word;
+
+        /// <summary>
+        /// 相似度
+        /// </summary>
+        public float SimilarRatio;
+
+        public override string ToString()
+        {
+            return Word.Word;
+        }
+
+        #region IComparable Members
+
+        public int CompareTo(object obj)
+        {
+            SearchWordResult dest = (SearchWordResult)obj;
+
+            if (this.SimilarRatio == dest.SimilarRatio)
+            {
+                return 0;
+            }
+            else if (this.SimilarRatio > dest.SimilarRatio)
+            {
+                return -1;
+            }
+            else
+            {
+                return 1;
+            }
+        }
+
+        #endregion
+    }
 
     [Serializable]
     public class WordDictionaryFile
@@ -38,6 +97,95 @@ namespace PanGu.Dict
         Dictionary<char, byte[]> _FirstCharDict = new Dictionary<char,byte[]>();
 
         internal Dict.ChsName ChineseName = null;
+
+        public int Count
+        {
+            get
+            {
+                if (_WordDict == null)
+                {
+                    return 0;
+                }
+                else
+                {
+                    return _WordDict.Count;
+                }
+            }
+        }
+
+        #region Private Methods
+        private WordDictionaryFile LoadFromBinFile(String fileName)
+        {
+            WordDictionaryFile dictFile = new WordDictionaryFile();
+            dictFile.Dicts = new List<WordAttribute>();
+
+            FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read);
+
+            byte[] version = new byte[32];
+            fs.Read(version, 0, version.Length);
+            String ver = Encoding.UTF8.GetString(version, 0, version.Length);
+
+            String verNumStr = Framework.Regex.GetMatch(ver, "Pan Gu Segment V(.+)", true);
+
+            while (fs.Position < fs.Length)
+            {
+                byte[] buf = new byte[sizeof(int)];
+                fs.Read(buf, 0, buf.Length);
+                int length = BitConverter.ToInt32(buf, 0);
+
+                buf = new byte[length];
+
+                fs.Read(buf, 0, buf.Length);
+
+                string word = Encoding.UTF8.GetString(buf, 0, length - sizeof(int) - sizeof(double));
+                POS pos = (POS)BitConverter.ToInt32(buf, length - sizeof(int) - sizeof(double));
+                double frequency = BitConverter.ToDouble(buf, length - sizeof(double));
+
+                WordAttribute dict = new WordAttribute(word, pos, frequency);
+                string.Intern(dict.Word);
+
+                dictFile.Dicts.Add(dict);
+            }
+
+            fs.Close();
+
+            return dictFile;
+        }
+
+        private void SaveToBinFile(String fileName)
+        {
+            using (FileStream fs = new FileStream(fileName, FileMode.Create))
+            {
+                byte[] version = new byte[32];
+
+                int i = 0;
+                foreach (byte v in System.Text.Encoding.UTF8.GetBytes("Pan Gu Segment V1.0"))
+                {
+                    version[i] = v;
+                    i++;
+                }
+
+                fs.Write(version, 0, version.Length);
+
+                foreach (WordAttribute wa in _WordDict.Values)
+                {
+                    byte[] word = System.Text.Encoding.UTF8.GetBytes(wa.Word);
+                    byte[] pos = System.BitConverter.GetBytes((int)wa.Pos);
+                    byte[] frequency = System.BitConverter.GetBytes(wa.Frequency);
+                    byte[] length = System.BitConverter.GetBytes(word.Length + frequency.Length + pos.Length);
+
+                    fs.Write(length, 0, length.Length);
+                    fs.Write(word, 0, word.Length);
+                    fs.Write(pos, 0, pos.Length);
+                    fs.Write(frequency, 0, frequency.Length);
+                }
+            }
+        }
+
+
+        #endregion
+
+        #region Public Methods
 
         public WordAttribute GetWordAttr(string word)
         {
@@ -145,12 +293,12 @@ namespace PanGu.Dict
             _WordDict = new Dictionary<string, WordAttribute>();
             _FirstCharDict = new Dictionary<char, byte[]>();
 
-            foreach (WordAttribute wordInfo in LoadFromBinFile(fileName).Dicts)
+            foreach (WordAttribute wa in LoadFromBinFile(fileName).Dicts)
             {
-                string key = wordInfo.Word.ToLower();
+                string key = wa.Word.ToLower();
                 if (!_WordDict.ContainsKey(key))
                 {
-                    _WordDict.Add(key, wordInfo);
+                    _WordDict.Add(key, wa);
 
                     byte[] wordLenArray;
                     if (!_FirstCharDict.TryGetValue(key[0], out wordLenArray))
@@ -199,43 +347,166 @@ namespace PanGu.Dict
 
         }
 
-        static public WordDictionaryFile LoadFromBinFile(String fileName)
+        public void Save(string fileName)
         {
-            WordDictionaryFile dictFile = new WordDictionaryFile();
-            dictFile.Dicts = new List<WordAttribute>();
-
-            FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read);
-
-            byte[] version = new byte[32];
-            fs.Read(version, 0, version.Length);
-            String ver = Encoding.UTF8.GetString(version, 0, version.Length);
-
-            String verNumStr = Framework.Regex.GetMatch(ver, "Pan Gu Segment V(.+)", true);
-
-            while (fs.Position < fs.Length)
-            {
-                byte[] buf = new byte[sizeof(int)];
-                fs.Read(buf, 0, buf.Length);
-                int length = BitConverter.ToInt32(buf, 0);
-
-                buf = new byte[length];
-
-                fs.Read(buf, 0, buf.Length);
-
-                string word = Encoding.UTF8.GetString(buf, 0, length - sizeof(int) - sizeof(double));
-                POS pos = (POS)BitConverter.ToInt32(buf, length - sizeof(int) - sizeof(double));
-                double frequency = BitConverter.ToDouble(buf, length - sizeof(double));
-
-                WordAttribute dict = new WordAttribute(word, pos, frequency);
-                string.Intern(dict.Word);
-
-                dictFile.Dicts.Add(dict);
-            }
-
-            fs.Close();
-
-            return dictFile;
+            SaveToBinFile(fileName);
         }
 
+        public void InsertWord(String word, double frequency, POS pos)
+        {
+            if (_WordDict == null)
+            {
+                return;
+            }
+
+            string key = word.ToLower();
+            if (_WordDict.ContainsKey(key))
+            {
+                return;
+            }
+
+            WordAttribute wa = new WordAttribute(word, pos, frequency);
+
+            _WordDict.Add(key, wa);
+
+            byte[] wordLenArray;
+            if (!_FirstCharDict.TryGetValue(key[0], out wordLenArray))
+            {
+                wordLenArray = new byte[4];
+                wordLenArray[0] = (byte)key.Length;
+
+                _FirstCharDict.Add(key[0], wordLenArray);
+            }
+            else
+            {
+                bool find = false;
+                int i;
+                for (i = 0; i < wordLenArray.Length; i++)
+                {
+                    byte len = wordLenArray[i];
+                    if (len == key.Length)
+                    {
+                        find = true;
+                        break;
+                    }
+
+                    if (len == 0)
+                    {
+                        wordLenArray[i] = (byte)key.Length;
+                        find = true;
+                        break;
+                    }
+                }
+
+                if (!find)
+                {
+                    byte[] temp = new byte[wordLenArray.Length * 2];
+
+                    wordLenArray.CopyTo(temp, 0);
+                    wordLenArray = temp;
+                    wordLenArray[i] = (byte)key.Length;
+
+                    _FirstCharDict[key[0]] = wordLenArray;
+                }
+            }
+
+        }
+
+        public void UpdateWord(String word, double frequency, POS pos)
+        {
+            if (_WordDict == null)
+            {
+                return;
+            }
+
+            string key = word.ToLower();
+            if (!_WordDict.ContainsKey(key))
+            {
+                return;
+            }
+
+            _WordDict[key].Word = word;
+            _WordDict[key].Frequency = frequency;
+            _WordDict[key].Pos = pos;
+        }
+
+        public void DeleteWord(String word)
+        {
+            if (_WordDict == null)
+            {
+                return;
+            }
+
+            string key = word.ToLower();
+            if (_WordDict.ContainsKey(key))
+            {
+                _WordDict.Remove(key);
+            }
+        }
+
+        /// <summary>
+        /// 通过遍历方式搜索
+        /// </summary>
+        /// <returns></returns>
+        public List<SearchWordResult> Search(String key)
+        {
+            Debug.Assert(_WordDict != null);
+
+            List<SearchWordResult> result = new List<SearchWordResult>();
+
+            foreach (WordAttribute wa in _WordDict.Values)
+            {
+                if (wa.Word.Contains(key))
+                {
+                    SearchWordResult wordResult = new SearchWordResult();
+                    wordResult.Word = wa;
+                    wordResult.SimilarRatio = (float)key.Length / (float)wa.Word.Length;
+                    result.Add(wordResult);
+                }
+            }
+
+            return result;
+        }
+
+        public List<SearchWordResult> SearchByLength(int len)
+        {
+            Debug.Assert(_WordDict != null);
+
+            List<SearchWordResult> result = new List<SearchWordResult>();
+
+            foreach (WordAttribute wa in _WordDict.Values)
+            {
+                if (wa.Word.Length == len)
+                {
+                    SearchWordResult wordResult = new SearchWordResult();
+                    wordResult.Word = wa;
+                    wordResult.SimilarRatio = 0;
+                    result.Add(wordResult);
+                }
+            }
+
+            return result;
+        }
+
+        public List<SearchWordResult> SearchByPos(POS Pos)
+        {
+            Debug.Assert(_WordDict != null);
+
+            List<SearchWordResult> result = new List<SearchWordResult>();
+
+            foreach (WordAttribute wa in _WordDict.Values)
+            {
+                if ((wa.Pos & Pos) != 0)
+                {
+                    SearchWordResult wordResult = new SearchWordResult();
+                    wordResult.Word = wa;
+                    wordResult.SimilarRatio = 0;
+                    result.Add(wordResult);
+                }
+            }
+
+            return result;
+        }
+        #endregion
     }
 }
