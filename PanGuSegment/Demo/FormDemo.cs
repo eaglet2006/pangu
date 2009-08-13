@@ -116,7 +116,7 @@ namespace Demo
                 if (showPosition)
                 {
 
-                    if (PanGu.Setting.PanGuSettings.Config.MatchOptions.MultiDimensionality)
+                    if (_Options.MultiDimensionality)
                     {
                         wordsString.AppendFormat("{0}({1},{2})/", wordInfo.Word, wordInfo.Position, wordInfo.Rank);
                     }
