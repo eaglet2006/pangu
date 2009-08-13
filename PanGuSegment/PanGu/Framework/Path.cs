@@ -24,6 +24,15 @@ namespace PanGu.Framework
 {
     public class Path
     {
+        static public string GetAssemblyPath()
+        {
+            const string _PREFIX = @"file:///";
+            string codeBase = System.Reflection.Assembly.GetExecutingAssembly().CodeBase;
+
+            codeBase = codeBase.Substring(_PREFIX.Length, codeBase.Length - _PREFIX.Length).Replace("/", "\\");
+            return System.IO.Path.GetDirectoryName(codeBase) + @"\";
+        }
+
         static public string ProcessDirectory
         {
             get

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormDemo));
             this.label10 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
             this.numericUpDownRedundancy = new System.Windows.Forms.NumericUpDown();
@@ -114,6 +115,7 @@
             this.buttonSaveConfig.TabIndex = 84;
             this.buttonSaveConfig.Text = "保存配置";
             this.buttonSaveConfig.UseVisualStyleBackColor = true;
+            this.buttonSaveConfig.Click += new System.EventHandler(this.buttonSaveConfig_Click);
             // 
             // numericUpDownUnknownWordsThreshold
             // 
@@ -397,6 +399,7 @@
             this.Controls.Add(this.textBoxSegwords);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.textBoxSource);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FormDemo";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.FormDemo_Load);

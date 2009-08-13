@@ -33,6 +33,7 @@ namespace PanGu
         #region Private fields
 
         static object _LockObj = new object();
+        static bool _Inited = false;
 
         internal static Dict.WordDictionary _WordDictionary = null;
         internal static Dict.ChsName _ChsName = null;
@@ -374,6 +375,11 @@ namespace PanGu
 
         public ICollection<WordInfo> DoSegment(string text, Match.MatchOptions options, Match.MatchParameter parameters)
         {
+            if (string.IsNullOrEmpty(text))
+            {
+                return new SuperLinkedList<WordInfo>();
+            }
+
             try
             {
                 Dict.DictionaryLoader.Lock.Enter(PanGu.Framework.Lock.Mode.Share);
@@ -390,13 +396,7 @@ namespace PanGu
                     _Parameters = Setting.PanGuSettings.Config.Parameters;
                 }
 
-                lock (_LockObj)
-                {
-                    if (Setting.PanGuSettings.Config == null)
-                    {
-                        Init();
-                    }
-                }
+                Init();
 
                 SuperLinkedList<WordInfo> result = PreSegment(text);
 
@@ -434,7 +434,6 @@ namespace PanGu
             _DictLoader = new PanGu.Dict.DictionaryLoader(Setting.PanGuSettings.Config.GetDictionaryPath());
         }
 
-
         public static void Init()
         {
             Init(null);
@@ -442,21 +441,26 @@ namespace PanGu
 
         public static void Init(string fileName)
         {
-            if (Setting.PanGuSettings.Config != null)
+            lock (_LockObj)
             {
-                return;
-            }
+                if (_Inited)
+                {
+                    return;
+                }
 
-            if (fileName == null)
-            {
-                Setting.SettingLoader loader = new PanGu.Setting.SettingLoader();
-            }
-            else
-            {
-                Setting.SettingLoader loader = new PanGu.Setting.SettingLoader(fileName);
-            }
+                if (fileName == null)
+                {
+                    Setting.SettingLoader loader = new PanGu.Setting.SettingLoader();
+                }
+                else
+                {
+                    Setting.SettingLoader loader = new PanGu.Setting.SettingLoader(fileName);
+                }
 
-            LoadDictionary();
+                LoadDictionary();
+
+                _Inited = true;
+            }
         }
 
 

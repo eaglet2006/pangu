@@ -75,8 +75,8 @@ namespace PanGu.Setting
             string path = DictionaryPath;
 
             string currentDir = System.IO.Directory.GetCurrentDirectory();
-            System.IO.Directory.SetCurrentDirectory(path);
-            path = System.IO.Directory.GetCurrentDirectory();
+            System.IO.Directory.SetCurrentDirectory(Framework.Path.GetAssemblyPath());
+            path = System.IO.Path.GetFullPath(path);
             System.IO.Directory.SetCurrentDirectory(currentDir);
 
             return Path.AppendDivision(path, '\\');

@@ -110,24 +110,31 @@ namespace System.Collections.Generic
                 return;
             }
 
-            SuperLinkedListNode<T> nodeNext = node.Next;
-            SuperLinkedListNode<T> newLast = newLinkedList.Last;
+            SuperLinkedListNode<T> cur = node;
 
-            node.next = newLinkedList.First;
-            newLinkedList.First.prev = node;
-
-            if (nodeNext != null)
+            foreach (T t in newLinkedList)
             {
-                newLast.next = nodeNext;
-                nodeNext.prev = newLast;
-            }
-            else
-            {
-                newLast.next = null;
-                head.prev = newLast;
+                cur = this.AddAfter(cur, t);
             }
 
-            count += newLinkedList.Count;
+            //SuperLinkedListNode<T> nodeNext = node.Next;
+            //SuperLinkedListNode<T> newLast = newLinkedList.Last;
+
+            //node.next = newLinkedList.First;
+            //newLinkedList.First.prev = node;
+
+            //if (nodeNext != null)
+            //{
+            //    newLast.next = nodeNext;
+            //    nodeNext.prev = newLast;
+            //}
+            //else
+            //{
+            //    newLast.next = head;
+            //    head.prev = newLast;
+            //}
+
+            //count += newLinkedList.Count;
         }
 
         public SuperLinkedListNode<T> AddBefore(SuperLinkedListNode<T> node, T value)

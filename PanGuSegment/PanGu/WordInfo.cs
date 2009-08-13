@@ -16,7 +16,7 @@ namespace PanGu
     }
 
 
-    public class WordInfo : WordAttribute
+    public class WordInfo : WordAttribute, IComparable<WordInfo>
     {
         /// <summary>
         /// Current word type
@@ -88,5 +88,29 @@ namespace PanGu
         {
             return this.Position + this.Word.Length;
         }
+
+        #region IComparable<WordInfo> Members
+
+        public int CompareTo(WordInfo other)
+        {
+            if (other == null)
+            {
+                return -1;
+            }
+
+            if (this.Position != other.Position)
+            {
+                return this.Position.CompareTo(other.Position);
+            }
+
+            if (other.Word == null)
+            {
+                return -1;
+            }
+
+            return this.Word.Length.CompareTo(other.Word.Length);
+        }
+
+        #endregion
     }
 }

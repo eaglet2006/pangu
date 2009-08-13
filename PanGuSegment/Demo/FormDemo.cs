@@ -141,11 +141,8 @@ namespace Demo
             DisplaySegment(true);
         }
 
-        private void buttonSegment_Click(object sender, EventArgs e)
+        private void UpdateSettings()
         {
-            _Options = PanGu.Setting.PanGuSettings.Config.GetOptionsCopy();
-            _Parameters = PanGu.Setting.PanGuSettings.Config.GetParameterCopy();
-
             _Options.FrequencyFirst = checkBoxFreqFirst.Checked;
             _Options.FilterStopWords = checkBoxFilterStopWords.Checked;
             _Options.ChineseNameIdentify = checkBoxMatchName.Checked;
@@ -156,6 +153,15 @@ namespace Demo
 
             _Parameters.Redundancy = (int)numericUpDownRedundancy.Value;
 
+        }
+
+        private void buttonSegment_Click(object sender, EventArgs e)
+        {
+            _Options = PanGu.Setting.PanGuSettings.Config.GetOptionsCopy();
+            _Parameters = PanGu.Setting.PanGuSettings.Config.GetParameterCopy();
+
+            UpdateSettings();
+
             if (checkBoxDisplayPosition.Checked)
             {
                 DisplaySegmentAndPostion();
@@ -164,6 +170,16 @@ namespace Demo
             {
                 DisplaySegment();
             }
+        }
+
+        private void buttonSaveConfig_Click(object sender, EventArgs e)
+        {
+            _Options = PanGu.Setting.PanGuSettings.Config.MatchOptions;
+            _Parameters = PanGu.Setting.PanGuSettings.Config.Parameters;
+
+            UpdateSettings();
+
+            PanGu.Setting.PanGuSettings.Save("PanGu.xml");
         }
     }
 }
