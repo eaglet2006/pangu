@@ -103,11 +103,11 @@ namespace System.Collections.Generic
             newNode.list = this;
         }
 
-        public void AddAfter(SuperLinkedListNode<T> node, SuperLinkedList<T> newLinkedList)
+        public SuperLinkedListNode<T> AddAfter(SuperLinkedListNode<T> node, SuperLinkedList<T> newLinkedList)
         {
             if (newLinkedList.Count <= 0)
             {
-                return;
+                return node;
             }
 
             SuperLinkedListNode<T> cur = node;
@@ -116,6 +116,8 @@ namespace System.Collections.Generic
             {
                 cur = this.AddAfter(cur, t);
             }
+
+            return cur;
 
             //SuperLinkedListNode<T> nodeNext = node.Next;
             //SuperLinkedListNode<T> newLast = newLinkedList.Last;

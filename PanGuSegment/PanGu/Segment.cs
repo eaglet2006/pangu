@@ -302,9 +302,7 @@ namespace PanGu
                             curChsMatch = curChsMatch.Next;
                         }
 
-                        SuperLinkedListNode<WordInfo> lst = chsMatchWords.Last;
-
-                        result.AddAfter(cur, chsMatchWords);
+                        SuperLinkedListNode<WordInfo> lst = result.AddAfter(cur, chsMatchWords);
                         SuperLinkedListNode<WordInfo> removeItem = cur;
                         cur = lst.Next;
                         result.Remove(removeItem);
