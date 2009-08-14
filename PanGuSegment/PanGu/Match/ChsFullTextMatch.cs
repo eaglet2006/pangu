@@ -154,8 +154,10 @@ namespace PanGu.Match
 
         Framework.AppendList<Node> _LeafNodeList = new PanGu.Framework.AppendList<Node>();
         List<Dict.PositionLength[]> _AllCombinations = new List<PanGu.Dict.PositionLength[]>();
+        Dict.WordDictionary _WordDict;
 
         const int TopRecord = 3;
+        const POS SingleWordMask = POS.POS_D_C | POS.POS_D_P | POS.POS_D_R | POS.POS_D_U;
 
         /// <summary>
         /// Build tree 
@@ -314,6 +316,165 @@ namespace PanGu.Match
             return result;
         }
 
+        private bool IsKnownSingleWord(int[] masks, int index, string orginalText)
+        {
+            int state = masks[index];
+            if (state == 2)
+            {
+                return false;
+            }
+
+            if (state == 1)
+            {
+                //如果单字是连词、助词、介词、代词
+                WordAttribute wa = _WordDict.GetWordAttr(orginalText[index].ToString());
+
+                if (wa != null)
+                {
+                    if ((wa.Pos & SingleWordMask) != 0)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+
+        private List<WordInfo> GetUnknowWords(int[] masks, string orginalText, out bool needRemoveSingleWord)
+        {
+            List<WordInfo> unknownWords = new List<WordInfo>();
+
+            //找到所有未登录词
+            needRemoveSingleWord = false;
+
+            int j = 0;
+            bool begin = false;
+            int beginPosition = 0;
+            while (j < masks.Length)
+            {
+                if (!begin)
+                {
+                    if (IsKnownSingleWord(masks, j, orginalText))
+                    {
+                        begin = true;
+                        beginPosition = j;
+                    }
+                }
+                else
+                {
+                    bool mergeUnknownWord = true;
+
+                    if (!IsKnownSingleWord(masks, j, orginalText))
+                    {
+                        if (j - beginPosition <= 2)
+                        {
+                            for (int k = beginPosition; k < j; k++)
+                            {
+                                mergeUnknownWord = false;
+
+                                if (masks[k] != 1)
+                                {
+                                    string word = orginalText.Substring(k, 1);
+                                    WordInfo wi = new WordInfo();
+                                    wi.Word = word;
+                                    wi.Position = k;
+                                    wi.WordType = WordType.None;
+                                    wi.Rank = _Parameters.UnknowRank;
+                                    unknownWords.Add(wi);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            for (int k = beginPosition; k < j; k++)
+                            {
+                                if (masks[k] == 1)
+                                {
+                                    masks[k] = 11;
+                                    needRemoveSingleWord = true;
+                                }
+                            }
+                        }
+
+                        begin = false;
+
+                        if (mergeUnknownWord)
+                        {
+                            string word = orginalText.Substring(beginPosition,
+                                j - beginPosition);
+                            WordInfo wi = new WordInfo();
+                            wi.Word = word;
+                            wi.Position = beginPosition;
+                            wi.WordType = WordType.None;
+                            wi.Rank = _Parameters.UnknowRank;
+                            unknownWords.Add(wi);
+                        }
+                    }
+                }
+
+                j++;
+            }
+
+            if (begin)
+            {
+                bool mergeUnknownWord = true;
+
+                if (j - beginPosition <= 2)
+                {
+                    for (int k = beginPosition; k < j; k++)
+                    {
+                        mergeUnknownWord = false;
+
+                        if (masks[k] != 1)
+                        {
+                            string word = orginalText.Substring(k, 1);
+                            WordInfo wi = new WordInfo();
+                            wi.Word = word;
+                            wi.Position = k;
+                            wi.WordType = WordType.None;
+                            wi.Rank = _Parameters.UnknowRank;
+                            unknownWords.Add(wi);
+                        }
+                    }
+                }
+                else
+                {
+                    for (int k = beginPosition; k < j; k++)
+                    {
+                        if (masks[k] == 1)
+                        {
+                            masks[k] = 11;
+                            needRemoveSingleWord = true;
+                        }
+                    }
+                }
+
+                begin = false;
+
+                if (mergeUnknownWord)
+                {
+
+                    string word = orginalText.Substring(beginPosition,
+                        j - beginPosition);
+                    WordInfo wi = new WordInfo();
+                    wi.Word = word;
+                    wi.Position = beginPosition;
+                    wi.WordType = WordType.None;
+                    wi.Rank = _Parameters.UnknowRank;
+                    unknownWords.Add(wi);
+                }
+            }
+
+            return unknownWords;
+        }
+
+        public ChsFullTextMatch(Dict.WordDictionary wordDict)
+        {
+            _WordDict = wordDict;
+        }
+
         public SuperLinkedList<WordInfo> Match(PanGu.Dict.PositionLength[] positionLenArr, string orginalText, int count)
         {
             if (_Options == null)
@@ -417,128 +578,8 @@ namespace PanGu.Match
 
             #region 合并未登录词
 
-            List<WordInfo> unknownWords = new List<WordInfo>();
-
-            //找到所有未登录词
-            bool needRemoveSingleWord = false;
-
-            j = 0;
-            bool begin = false;
-            int beginPosition = 0;
-            while (j < masks.Length)
-            {
-                if (!begin)
-                {
-                    if (masks[j] != 2)
-                    {
-                        begin = true;
-                        beginPosition = j;
-                    }
-                }
-                else
-                {
-                    bool mergeUnknownWord = true;
-
-                    if (masks[j] == 2)
-                    {
-                        if (j - beginPosition <= 2)
-                        {
-                            for (int k = beginPosition; k < j; k++)
-                            {
-                                mergeUnknownWord = false;
-
-                                if (masks[k] != 1)
-                                {
-                                    string word = orginalText.Substring(k, 1);
-                                    WordInfo wi = new WordInfo();
-                                    wi.Word = word;
-                                    wi.Position = k;
-                                    wi.WordType = WordType.None;
-                                    wi.Rank = _Parameters.UnknowRank;
-                                    unknownWords.Add(wi);
-                                }
-                            }
-                        }
-                        else
-                        {
-                            for (int k = beginPosition; k < j; k++)
-                            {
-                                if (masks[k] == 1)
-                                {
-                                    masks[k] = 11;
-                                    needRemoveSingleWord = true;
-                                }
-                            }
-                        }
-
-                        begin = false;
-
-                        if (mergeUnknownWord)
-                        {
-                            string word = orginalText.Substring(beginPosition,
-                                j - beginPosition);
-                            WordInfo wi = new WordInfo();
-                            wi.Word = word;
-                            wi.Position = beginPosition;
-                            wi.WordType = WordType.None;
-                            wi.Rank = _Parameters.UnknowRank;
-                            unknownWords.Add(wi);
-                        }
-                    }
-                }
-
-                j++;
-            }
-
-            if (begin)
-            {
-                bool mergeUnknownWord = true;
-
-                if (j - beginPosition <= 2)
-                {
-                    for (int k = beginPosition; k < j; k++)
-                    {
-                        mergeUnknownWord = false;
-
-                        if (masks[k] != 1)
-                        {
-                            string word = orginalText.Substring(k, 1);
-                            WordInfo wi = new WordInfo();
-                            wi.Word = word;
-                            wi.Position = k;
-                            wi.WordType = WordType.None;
-                            wi.Rank = _Parameters.UnknowRank;
-                            unknownWords.Add(wi);
-                        }
-                    }
-                }
-                else
-                {
-                    for (int k = beginPosition; k < j; k++)
-                    {
-                        if (masks[k] == 1)
-                        {
-                            masks[k] = 11;
-                            needRemoveSingleWord = true;
-                        }
-                    }
-                }
-
-                begin = false;
-
-                if (mergeUnknownWord)
-                {
-
-                    string word = orginalText.Substring(beginPosition,
-                        j - beginPosition);
-                    WordInfo wi = new WordInfo();
-                    wi.Word = word;
-                    wi.Position = beginPosition;
-                    wi.WordType = WordType.None;
-                    wi.Rank = _Parameters.UnknowRank;
-                    unknownWords.Add(wi);
-                }
-            }
+            bool needRemoveSingleWord;
+            List<WordInfo> unknownWords = GetUnknowWords(masks, orginalText, out needRemoveSingleWord);
 
             //合并到结果序列的对应位置中
             if (unknownWords.Count > 0)
@@ -585,7 +626,10 @@ namespace PanGu.Match
                         }
                     }
 
-                    cur = cur.Next;
+                    if (cur.Value.Position < unknownWords[j].Position)
+                    {
+                        cur = cur.Next;
+                    }
                 }
 
                 while (j < unknownWords.Count)

@@ -252,7 +252,7 @@ namespace PanGu
                         }
 
                         PanGu.Framework.AppendList<Dict.PositionLength> pls = _WordDictionary.GetAllMatchs(inputText, _Options.ChineseNameIdentify);
-                        PanGu.Match.ChsFullTextMatch chsMatch = new PanGu.Match.ChsFullTextMatch();
+                        PanGu.Match.ChsFullTextMatch chsMatch = new PanGu.Match.ChsFullTextMatch(_WordDictionary);
                         chsMatch.Options = _Options;
                         chsMatch.Parameters = _Parameters;
                         SuperLinkedList<WordInfo> chsMatchWords = chsMatch.Match(pls.Items, cur.Value.Word, pls.Count);
