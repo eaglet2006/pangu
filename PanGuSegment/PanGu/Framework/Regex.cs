@@ -26,13 +26,9 @@ namespace PanGu.Framework
     public class Regex
     {
         static public bool GetMatchStrings(String text, String regx,
-            bool ignoreCase, ref ArrayList output)
+            bool ignoreCase, out List<string> output)
         {
-            if (output == null)
-            {
-                Debug.Assert(false);
-                return false;
-            }
+            output = new List<string>();
 
             output.Clear();
 

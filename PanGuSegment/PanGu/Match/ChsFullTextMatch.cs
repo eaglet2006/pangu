@@ -560,7 +560,7 @@ namespace PanGu.Match
                 //for (int i = 0; i < _AllCombinations[0].Length; i++)
                 {
                     //result.AddLast(new WordInfo(_AllCombinations[0][i], orginalText));
-                    result.AddLast(new WordInfo(pl, orginalText));
+                    result.AddLast(new WordInfo(pl, orginalText, _Parameters));
                     if (pl.Length > 1)
                     {
                         for (int k = pl.Position;

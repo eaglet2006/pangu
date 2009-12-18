@@ -55,7 +55,7 @@ namespace PanGu
             this.Frequency = wordAttr.Frequency;
         }
 
-        public WordInfo(Dict.PositionLength pl, string oringinalText)
+        public WordInfo(Dict.PositionLength pl, string oringinalText, Match.MatchParameter parameters)
         {
             this.Word = oringinalText.Substring(pl.Position, pl.Length);
             this.Pos = pl.WordAttr.Pos;
@@ -66,19 +66,19 @@ namespace PanGu
             switch (pl.Level)
             {
                 case 0:
-                    this.Rank = Setting.PanGuSettings.Config.Parameters.BestRank;
+                    this.Rank = parameters.BestRank;
                     break;
                 case 1:
-                    this.Rank = Setting.PanGuSettings.Config.Parameters.SecRank;
+                    this.Rank = parameters.SecRank;
                     break;
                 case 2:
-                    this.Rank = Setting.PanGuSettings.Config.Parameters.ThirdRank;
+                    this.Rank = parameters.ThirdRank;
                     break;
                 case 3:
-                    this.Rank = Setting.PanGuSettings.Config.Parameters.SingleRank;
+                    this.Rank = parameters.SingleRank;
                     break;
                 default:
-                    this.Rank = Setting.PanGuSettings.Config.Parameters.BestRank;
+                    this.Rank = parameters.BestRank;
                     break;
             }
 

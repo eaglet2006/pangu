@@ -108,6 +108,8 @@ public partial class _Default : System.Web.UI.Page
             AspNetPager.CurPage = 1;
             ShowTable(TextBoxSearch.Text);
         }
+
+        GC.Collect();
     }
     protected void AspNetPager_PageChanged(object sender, Eaglet.Workroom.AspDotNetPager.AspNetPager.PageArgs e)
     {

@@ -25,10 +25,12 @@ namespace PanGu
 {
     public class Segment
     {
-        const string PATTERNS = @"[０-９\d]+\%|[０-９\d]{1,2}月|[０-９\d]{1,2}日|[０-９\d]{1,4}年|" +
-    @"[０-９\d]{1,4}-[０-９\d]{1,2}-[０-９\d]{1,2}|" +
-    @"\s+|" +
-    @"[０-９\d]+|[^ａ-ｚＡ-Ｚa-zA-Z0-9０-９\u4e00-\u9fa5]|[ａ-ｚＡ-Ｚa-zA-Z]+|[\u4e00-\u9fa5]+";
+    //    const string PATTERNS = @"[０-９\d]+\%|[０-９\d]{1,2}月|[０-９\d]{1,2}日|[０-９\d]{1,4}年|" +
+    //@"[０-９\d]{1,4}-[０-９\d]{1,2}-[０-９\d]{1,2}|" +
+    //@"\s+|" +
+    //@"[０-９\d]+|[^ａ-ｚＡ-Ｚa-zA-Z0-9０-９\u4e00-\u9fa5]|[ａ-ｚＡ-Ｚa-zA-Z]+|[\u4e00-\u9fa5]+";
+
+        const string PATTERNS = @"([０-９\d]+)|([ａ-ｚＡ-Ｚa-zA-Z_]+)";
 
         #region Private fields
 
@@ -141,7 +143,7 @@ namespace PanGu
                 }
 
                 WordInfo newWordInfo = new WordInfo(new PanGu.Dict.PositionLength(first, last - first, 
-                    wa), orginalText);
+                    wa), orginalText, _Parameters);
 
                 newWordInfo.WordType = WordType.English;
                 newWordInfo.Rank = _Parameters.EnglishRank;
@@ -221,7 +223,7 @@ namespace PanGu
 
             while (cur != null)
             {
-                if (Setting.PanGuSettings.Config.MatchOptions.IgnoreSpace)
+                if (_Options.IgnoreSpace)
                 {
                     if (cur.Value.WordType == WordType.Space)
                     {
@@ -308,7 +310,45 @@ namespace PanGu
                         result.Remove(removeItem);
                         break;
                     case WordType.English:
-                        cur.Value.Rank = Setting.PanGuSettings.Config.Parameters.EnglishRank;
+                        cur.Value.Rank = _Parameters.EnglishRank;
+                        List<string> output;
+
+                        if (_Options.MultiDimensionality)
+                        {
+                            if (Framework.Regex.GetMatchStrings(cur.Value.Word, PATTERNS, true, out output))
+                            {
+                                if (output.Count > 1)
+                                {
+                                    int position = cur.Value.Position;
+
+                                    foreach (string splitWord in output)
+                                    {
+                                        if (string.IsNullOrEmpty(splitWord))
+                                        {
+                                            continue;
+                                        }
+
+                                        WordInfo wi;
+
+                                        if (splitWord[0] >= '0' && splitWord[0] <= '9')
+                                        {
+                                            wi = new WordInfo(splitWord, POS.POS_A_M, 1);
+                                            wi.Position = position;
+                                            wi.Rank = _Parameters.NumericRank;
+                                        }
+                                        else
+                                        {
+                                            wi = new WordInfo(splitWord, POS.POS_A_NX, 1);
+                                            wi.Position = position;
+                                            wi.Rank = _Parameters.EnglishRank;
+                                        }
+
+                                        result.AddBefore(cur, wi);
+                                        position += splitWord.Length;
+                                    }
+                                }
+                            }
+                        }
 
                         if (!MergeEnglishSpecialWord(text, result, ref cur))
                         {
@@ -317,11 +357,11 @@ namespace PanGu
 
                         break;
                     case WordType.Numeric:
-                        cur.Value.Rank = Setting.PanGuSettings.Config.Parameters.NumericRank;
+                        cur.Value.Rank = _Parameters.NumericRank;
                         cur = cur.Next;
                         break;
                     case WordType.Symbol:
-                        cur.Value.Rank = Setting.PanGuSettings.Config.Parameters.SymbolRank;
+                        cur.Value.Rank = _Parameters.SymbolRank;
                         cur = cur.Next;
                         break;
                     default:
