@@ -317,7 +317,23 @@ namespace PanGu
                         {
                             if (Framework.Regex.GetMatchStrings(cur.Value.Word, PATTERNS, true, out output))
                             {
-                                if (output.Count > 1)
+                                int outputCount = 0;
+
+                                foreach (string str in output)
+                                {
+                                    if (!string.IsNullOrEmpty(str))
+                                    {
+                                        outputCount++;
+
+                                        if (outputCount > 1)
+                                        {
+                                            break;
+                                        }
+                                    }
+                                }
+
+
+                                if (outputCount > 1)
                                 {
                                     int position = cur.Value.Position;
 
