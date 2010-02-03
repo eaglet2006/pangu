@@ -27,7 +27,8 @@ namespace PanGu.Dict
     {
         Dictionary<string, string> _StopwordTbl = new Dictionary<string, string>();
 
-        public bool IsStopWord(string word)
+        public bool IsStopWord(string word, bool filterEnglish, int filterEnglishLength, 
+            bool filterNumeric, int filterNumericLength) 
         {
             if (word == null || word == "")
             {
@@ -38,6 +39,23 @@ namespace PanGu.Dict
 
             if (word[0] < 128)
             {
+                if (filterEnglish)
+                {
+                    if (word.Length > filterEnglishLength && (word[0] < '0' || word[0] > '9'))
+                    {
+                        return true;
+                    }
+                }
+
+                if (filterNumeric)
+                {
+                    if (word.Length > filterNumericLength && (word[0] >= '0' && word[0] <= '9'))
+                    {
+                        return true;
+                    }
+                }
+
+
                 key = word.ToLower();
             }
             else

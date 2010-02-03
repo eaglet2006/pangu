@@ -177,7 +177,9 @@ namespace PanGu
 
             for (int i = 0; i < text.Length; i++)
             {
-                dfaResult = lexical.Input(text[i], i);
+                char c = text[i];
+       
+                dfaResult = lexical.Input(c, i);
 
                 switch (dfaResult)
                 {
@@ -213,6 +215,61 @@ namespace PanGu
             }
 
             return result;
+        }
+
+        private string ConvertChineseCapitalToAsiic(string text)
+        {
+            StringBuilder sb = null;
+
+            for (int i = 0; i < text.Length; i++)
+            {
+                char c = text[i];
+                bool needReplace = false;
+
+                //[０-９\d]+)|([ａ-ｚＡ-Ｚa-zA-Z_]+)";
+                if (c >= '０' && text[i] <= '９')
+                {
+                    c -= '０';
+                    c += '0';
+                    needReplace = true;
+                }
+                else if (c >= 'ａ' && text[i] <= 'ｚ')
+                {
+                    c -= 'ａ';
+                    c += 'a';
+                    needReplace = true;
+                }
+                else if (c >= 'Ａ' && text[i] <= 'Ｚ')
+                {
+                    c -= 'Ａ';
+                    c += 'A';
+                    needReplace = true;
+                }
+
+                if (needReplace)
+                {
+                    if (sb == null)
+                    {
+                        sb = new StringBuilder();
+                        sb.Append(text.Substring(0, i));
+                    }
+                }
+
+                if (sb != null)
+                {
+                    sb.Append(c);
+                }
+
+            }
+
+            if (sb == null)
+            {
+                return text;
+            }
+            else
+            {
+                return sb.ToString();
+            }
         }
 
         private SuperLinkedList<WordInfo> PreSegment(String text)
@@ -312,6 +369,12 @@ namespace PanGu
                     case WordType.English:
                         cur.Value.Rank = _Parameters.EnglishRank;
                         List<string> output;
+                        cur.Value.Word = ConvertChineseCapitalToAsiic(cur.Value.Word);
+
+                        if (_Options.IgnoreCapital)
+                        {
+                            cur.Value.Word = cur.Value.Word.ToLower();
+                        }
 
                         if (_Options.MultiDimensionality)
                         {
@@ -373,6 +436,7 @@ namespace PanGu
 
                         break;
                     case WordType.Numeric:
+                        cur.Value.Word = ConvertChineseCapitalToAsiic(cur.Value.Word);
                         cur.Value.Rank = _Parameters.NumericRank;
                         cur = cur.Next;
                         break;
@@ -403,7 +467,9 @@ namespace PanGu
 
             while (cur != null)
             {
-                if (_StopWord.IsStopWord(cur.Value.Word))
+                if (_StopWord.IsStopWord(cur.Value.Word, 
+                    _Options.FilterEnglish, _Parameters.FilterEnglishLength,
+                    _Options.FilterNumeric, _Parameters.FilterNumericLength))
                 {
                     SuperLinkedListNode<WordInfo> removeItem = cur;
                     cur = cur.Next;

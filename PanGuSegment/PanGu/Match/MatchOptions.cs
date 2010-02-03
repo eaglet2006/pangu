@@ -48,6 +48,25 @@ namespace PanGu.Match
         /// </summary>
         public bool OutputSimplifiedTraditional = false;
 
+        /// <summary>
+        /// 未登录词识别
+        /// </summary>
+        public bool UnknownWordIdentify = true;
 
+        /// <summary>
+        /// 过滤英文，这个选项只有在过滤停用词选项生效时才有效
+        /// </summary>
+        public bool FilterEnglish = false;
+
+        /// <summary>
+        /// 过滤数字，这个选项只有在过滤停用词选项生效时才有效
+        /// </summary>
+        public bool FilterNumeric = false;
+
+
+        /// <summary>
+        /// 忽略英文大小写
+        /// </summary>
+        public bool IgnoreCapital = false;
     }
 }

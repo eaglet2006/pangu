@@ -65,6 +65,10 @@ namespace Demo
             checkBoxForceSingleWord.Checked = options.ForceSingleWord;
             checkBoxTraditionalChs.Checked = options.TraditionalChineseEnabled;
             checkBoxST.Checked = options.OutputSimplifiedTraditional;
+            checkBoxUnknownWord.Checked = options.UnknownWordIdentify;
+            checkBoxFilterEnglish.Checked = options.FilterEnglish;
+            checkBoxFilterNumeric.Checked = options.FilterNumeric;
+            checkBoxIgnoreCapital.Checked = options.IgnoreCapital;
 
             if (checkBoxMultiSelect.Checked)
             {
@@ -74,6 +78,8 @@ namespace Demo
             PanGu.Match.MatchParameter parameters = PanGu.Setting.PanGuSettings.Config.Parameters;
 
             numericUpDownRedundancy.Value = parameters.Redundancy;
+            numericUpDownFilterEnglishLength.Value = parameters.FilterEnglishLength;
+            numericUpDownFilterNumericLength.Value = parameters.FilterNumericLength;
 
             //str = Microsoft.VisualBasic.Strings.StrConv(str, Microsoft.VisualBasic.VbStrConv.SimplifiedChinese, 0);
 
@@ -150,8 +156,14 @@ namespace Demo
             _Options.ForceSingleWord = checkBoxForceSingleWord.Checked;
             _Options.TraditionalChineseEnabled = checkBoxTraditionalChs.Checked;
             _Options.OutputSimplifiedTraditional = checkBoxST.Checked;
+            _Options.UnknownWordIdentify = checkBoxUnknownWord.Checked;
+            _Options.FilterEnglish = checkBoxFilterEnglish.Checked;
+            _Options.FilterNumeric = checkBoxFilterNumeric.Checked;
+            _Options.IgnoreCapital = checkBoxIgnoreCapital.Checked;
 
             _Parameters.Redundancy = (int)numericUpDownRedundancy.Value;
+            _Parameters.FilterEnglishLength = (int)numericUpDownFilterEnglishLength.Value;
+            _Parameters.FilterNumericLength = (int)numericUpDownFilterNumericLength.Value;
 
         }
 

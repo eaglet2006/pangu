@@ -318,6 +318,7 @@ namespace PanGu.Match
 
         private bool IsKnownSingleWord(int[] masks, int index, string orginalText)
         {
+
             int state = masks[index];
             if (state == 2)
             {
@@ -326,6 +327,11 @@ namespace PanGu.Match
 
             if (state == 1)
             {
+                if (!_Options.UnknownWordIdentify)
+                {
+                    return false;
+                }
+
                 //如果单字是连词、助词、介词、代词
                 WordAttribute wa = _WordDict.GetWordAttr(orginalText[index].ToString());
 
@@ -354,70 +360,86 @@ namespace PanGu.Match
             int beginPosition = 0;
             while (j < masks.Length)
             {
-                if (!begin)
+                if (_Options.UnknownWordIdentify)
                 {
-                    if (IsKnownSingleWord(masks, j, orginalText))
+
+                    if (!begin)
                     {
-                        begin = true;
-                        beginPosition = j;
+                        if (IsKnownSingleWord(masks, j, orginalText))
+                        {
+                            begin = true;
+                            beginPosition = j;
+                        }
+                    }
+                    else
+                    {
+                        bool mergeUnknownWord = true;
+
+                        if (!IsKnownSingleWord(masks, j, orginalText))
+                        {
+                            if (j - beginPosition <= 2)
+                            {
+                                for (int k = beginPosition; k < j; k++)
+                                {
+                                    mergeUnknownWord = false;
+
+                                    if (masks[k] != 1)
+                                    {
+                                        string word = orginalText.Substring(k, 1);
+                                        WordInfo wi = new WordInfo();
+                                        wi.Word = word;
+                                        wi.Position = k;
+                                        wi.WordType = WordType.None;
+                                        wi.Rank = _Parameters.UnknowRank;
+                                        unknownWords.Add(wi);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                for (int k = beginPosition; k < j; k++)
+                                {
+                                    if (masks[k] == 1)
+                                    {
+                                        masks[k] = 11;
+                                        needRemoveSingleWord = true;
+                                    }
+                                }
+                            }
+
+                            begin = false;
+
+                            if (mergeUnknownWord)
+                            {
+                                string word = orginalText.Substring(beginPosition,
+                                    j - beginPosition);
+                                WordInfo wi = new WordInfo();
+                                wi.Word = word;
+                                wi.Position = beginPosition;
+                                wi.WordType = WordType.None;
+                                wi.Rank = _Parameters.UnknowRank;
+                                unknownWords.Add(wi);
+                            }
+                        }
                     }
                 }
                 else
                 {
-                    bool mergeUnknownWord = true;
-
-                    if (!IsKnownSingleWord(masks, j, orginalText))
+                    if (IsKnownSingleWord(masks, j, orginalText))
                     {
-                        if (j - beginPosition <= 2)
-                        {
-                            for (int k = beginPosition; k < j; k++)
-                            {
-                                mergeUnknownWord = false;
-
-                                if (masks[k] != 1)
-                                {
-                                    string word = orginalText.Substring(k, 1);
-                                    WordInfo wi = new WordInfo();
-                                    wi.Word = word;
-                                    wi.Position = k;
-                                    wi.WordType = WordType.None;
-                                    wi.Rank = _Parameters.UnknowRank;
-                                    unknownWords.Add(wi);
-                                }
-                            }
-                        }
-                        else
-                        {
-                            for (int k = beginPosition; k < j; k++)
-                            {
-                                if (masks[k] == 1)
-                                {
-                                    masks[k] = 11;
-                                    needRemoveSingleWord = true;
-                                }
-                            }
-                        }
-
-                        begin = false;
-
-                        if (mergeUnknownWord)
-                        {
-                            string word = orginalText.Substring(beginPosition,
-                                j - beginPosition);
-                            WordInfo wi = new WordInfo();
-                            wi.Word = word;
-                            wi.Position = beginPosition;
-                            wi.WordType = WordType.None;
-                            wi.Rank = _Parameters.UnknowRank;
-                            unknownWords.Add(wi);
-                        }
+                        WordInfo wi = new WordInfo();
+                        wi.Word = orginalText[j].ToString();
+                        wi.Position = j;
+                        wi.WordType = WordType.None;
+                        wi.Rank = _Parameters.UnknowRank;
+                        unknownWords.Add(wi);
                     }
                 }
 
                 j++;
             }
 
-            if (begin)
+            if (begin && _Options.UnknownWordIdentify)
             {
                 bool mergeUnknownWord = true;
 
@@ -494,13 +516,31 @@ namespace PanGu.Match
 
             if (count == 0)
             {
-                WordInfo wi = new WordInfo();
-                wi.Word = orginalText;
-                wi.Position = 0;
-                wi.WordType = WordType.None;
-                wi.Rank = 1;
-                result.AddFirst(wi);
-                return result;
+                if (_Options.UnknownWordIdentify)
+                {
+                    WordInfo wi = new WordInfo();
+                    wi.Word = orginalText;
+                    wi.Position = 0;
+                    wi.WordType = WordType.None;
+                    wi.Rank = 1;
+                    result.AddFirst(wi);
+                    return result;
+                }
+                else
+                {
+                    int position = 0;
+                    foreach (char c in orginalText)
+                    {
+                        WordInfo wi = new WordInfo();
+                        wi.Word = c.ToString();
+                        wi.Position = position++;
+                        wi.WordType = WordType.None;
+                        wi.Rank = 1;
+                        result.AddLast(wi);
+                    }
+
+                    return result;
+                }
             }
 
             BuildTree(positionLenArr, orginalText.Length, count, _Root, 0);
@@ -556,7 +596,7 @@ namespace PanGu.Match
             {
                 ICollection<Dict.PositionLength> positionCollection = MergeAllCombinations(redundancy);
 
-                foreach(Dict.PositionLength pl in positionCollection)
+                foreach (Dict.PositionLength pl in positionCollection)
                 //for (int i = 0; i < _AllCombinations[0].Length; i++)
                 {
                     //result.AddLast(new WordInfo(_AllCombinations[0][i], orginalText));
@@ -609,7 +649,7 @@ namespace PanGu.Match
                         cur = cur.Next;
                     }
                 }
-                
+
                 cur = result.First;
 
                 j = 0;
@@ -638,6 +678,8 @@ namespace PanGu.Match
                     j++;
                 }
             }
+
+
             #endregion
 
 

@@ -58,8 +58,18 @@
             this.checkBoxForceSingleWord = new System.Windows.Forms.CheckBox();
             this.checkBoxTraditionalChs = new System.Windows.Forms.CheckBox();
             this.checkBoxST = new System.Windows.Forms.CheckBox();
+            this.checkBoxUnknownWord = new System.Windows.Forms.CheckBox();
+            this.checkBoxFilterEnglish = new System.Windows.Forms.CheckBox();
+            this.numericUpDownFilterEnglishLength = new System.Windows.Forms.NumericUpDown();
+            this.label11 = new System.Windows.Forms.Label();
+            this.labelFilterNumericLength = new System.Windows.Forms.Label();
+            this.numericUpDownFilterNumericLength = new System.Windows.Forms.NumericUpDown();
+            this.checkBoxFilterNumeric = new System.Windows.Forms.CheckBox();
+            this.checkBoxIgnoreCapital = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownRedundancy)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownUnknownWordsThreshold)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownFilterEnglishLength)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownFilterNumericLength)).BeginInit();
             this.SuspendLayout();
             // 
             // label10
@@ -82,7 +92,7 @@
             // 
             // numericUpDownRedundancy
             // 
-            this.numericUpDownRedundancy.Location = new System.Drawing.Point(347, 589);
+            this.numericUpDownRedundancy.Location = new System.Drawing.Point(387, 590);
             this.numericUpDownRedundancy.Maximum = new decimal(new int[] {
             2,
             0,
@@ -334,7 +344,7 @@
             // checkBoxForceSingleWord
             // 
             this.checkBoxForceSingleWord.AutoSize = true;
-            this.checkBoxForceSingleWord.Location = new System.Drawing.Point(417, 591);
+            this.checkBoxForceSingleWord.Location = new System.Drawing.Point(494, 591);
             this.checkBoxForceSingleWord.Name = "checkBoxForceSingleWord";
             this.checkBoxForceSingleWord.Size = new System.Drawing.Size(98, 17);
             this.checkBoxForceSingleWord.TabIndex = 89;
@@ -358,18 +368,98 @@
             this.checkBoxST.AutoSize = true;
             this.checkBoxST.Checked = true;
             this.checkBoxST.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxST.Location = new System.Drawing.Point(691, 567);
+            this.checkBoxST.Location = new System.Drawing.Point(702, 567);
             this.checkBoxST.Name = "checkBoxST";
             this.checkBoxST.Size = new System.Drawing.Size(134, 17);
             this.checkBoxST.TabIndex = 91;
             this.checkBoxST.Text = "同时输出简体和繁体";
             this.checkBoxST.UseVisualStyleBackColor = true;
             // 
+            // checkBoxUnknownWord
+            // 
+            this.checkBoxUnknownWord.AutoSize = true;
+            this.checkBoxUnknownWord.Location = new System.Drawing.Point(599, 590);
+            this.checkBoxUnknownWord.Name = "checkBoxUnknownWord";
+            this.checkBoxUnknownWord.Size = new System.Drawing.Size(98, 17);
+            this.checkBoxUnknownWord.TabIndex = 92;
+            this.checkBoxUnknownWord.Text = "未登录词识别";
+            this.checkBoxUnknownWord.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxFilterEnglish
+            // 
+            this.checkBoxFilterEnglish.AutoSize = true;
+            this.checkBoxFilterEnglish.Location = new System.Drawing.Point(191, 619);
+            this.checkBoxFilterEnglish.Name = "checkBoxFilterEnglish";
+            this.checkBoxFilterEnglish.Size = new System.Drawing.Size(74, 17);
+            this.checkBoxFilterEnglish.TabIndex = 93;
+            this.checkBoxFilterEnglish.Text = "过滤英文";
+            this.checkBoxFilterEnglish.UseVisualStyleBackColor = true;
+            // 
+            // numericUpDownFilterEnglishLength
+            // 
+            this.numericUpDownFilterEnglishLength.Location = new System.Drawing.Point(387, 615);
+            this.numericUpDownFilterEnglishLength.Name = "numericUpDownFilterEnglishLength";
+            this.numericUpDownFilterEnglishLength.Size = new System.Drawing.Size(52, 20);
+            this.numericUpDownFilterEnglishLength.TabIndex = 94;
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(294, 620);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(79, 13);
+            this.label11.TabIndex = 95;
+            this.label11.Text = "过滤英文长度";
+            // 
+            // labelFilterNumericLength
+            // 
+            this.labelFilterNumericLength.AutoSize = true;
+            this.labelFilterNumericLength.Location = new System.Drawing.Point(599, 618);
+            this.labelFilterNumericLength.Name = "labelFilterNumericLength";
+            this.labelFilterNumericLength.Size = new System.Drawing.Size(79, 13);
+            this.labelFilterNumericLength.TabIndex = 98;
+            this.labelFilterNumericLength.Text = "过滤数字长度";
+            // 
+            // numericUpDownFilterNumericLength
+            // 
+            this.numericUpDownFilterNumericLength.Location = new System.Drawing.Point(692, 614);
+            this.numericUpDownFilterNumericLength.Name = "numericUpDownFilterNumericLength";
+            this.numericUpDownFilterNumericLength.Size = new System.Drawing.Size(52, 20);
+            this.numericUpDownFilterNumericLength.TabIndex = 97;
+            // 
+            // checkBoxFilterNumeric
+            // 
+            this.checkBoxFilterNumeric.AutoSize = true;
+            this.checkBoxFilterNumeric.Location = new System.Drawing.Point(494, 617);
+            this.checkBoxFilterNumeric.Name = "checkBoxFilterNumeric";
+            this.checkBoxFilterNumeric.Size = new System.Drawing.Size(74, 17);
+            this.checkBoxFilterNumeric.TabIndex = 96;
+            this.checkBoxFilterNumeric.Text = "过滤数字";
+            this.checkBoxFilterNumeric.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxIgnoreCapital
+            // 
+            this.checkBoxIgnoreCapital.AutoSize = true;
+            this.checkBoxIgnoreCapital.Location = new System.Drawing.Point(702, 589);
+            this.checkBoxIgnoreCapital.Name = "checkBoxIgnoreCapital";
+            this.checkBoxIgnoreCapital.Size = new System.Drawing.Size(110, 17);
+            this.checkBoxIgnoreCapital.TabIndex = 99;
+            this.checkBoxIgnoreCapital.Text = "忽略英文大小写";
+            this.checkBoxIgnoreCapital.UseVisualStyleBackColor = true;
+            // 
             // FormDemo
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(954, 614);
+            this.ClientSize = new System.Drawing.Size(954, 679);
+            this.Controls.Add(this.checkBoxIgnoreCapital);
+            this.Controls.Add(this.labelFilterNumericLength);
+            this.Controls.Add(this.numericUpDownFilterNumericLength);
+            this.Controls.Add(this.checkBoxFilterNumeric);
+            this.Controls.Add(this.label11);
+            this.Controls.Add(this.numericUpDownFilterEnglishLength);
+            this.Controls.Add(this.checkBoxFilterEnglish);
+            this.Controls.Add(this.checkBoxUnknownWord);
             this.Controls.Add(this.checkBoxST);
             this.Controls.Add(this.checkBoxTraditionalChs);
             this.Controls.Add(this.checkBoxForceSingleWord);
@@ -401,10 +491,12 @@
             this.Controls.Add(this.textBoxSource);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FormDemo";
-            this.Text = "Form1";
+            this.Text = "PanGu Demo";
             this.Load += new System.EventHandler(this.FormDemo_Load);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownRedundancy)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownUnknownWordsThreshold)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownFilterEnglishLength)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownFilterNumericLength)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -441,6 +533,14 @@
         private System.Windows.Forms.CheckBox checkBoxForceSingleWord;
         private System.Windows.Forms.CheckBox checkBoxTraditionalChs;
         private System.Windows.Forms.CheckBox checkBoxST;
+        private System.Windows.Forms.CheckBox checkBoxUnknownWord;
+        private System.Windows.Forms.CheckBox checkBoxFilterEnglish;
+        private System.Windows.Forms.NumericUpDown numericUpDownFilterEnglishLength;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Label labelFilterNumericLength;
+        private System.Windows.Forms.NumericUpDown numericUpDownFilterNumericLength;
+        private System.Windows.Forms.CheckBox checkBoxFilterNumeric;
+        private System.Windows.Forms.CheckBox checkBoxIgnoreCapital;
 
     }
 }

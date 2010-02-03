@@ -82,5 +82,15 @@ namespace PanGu.Match
         /// 比如原来文本是简体，这里就是输出的繁体字的权值，反之亦然。
         /// </summary>
         public int SimplifiedTraditionalRank = 1;
+
+        /// <summary>
+        /// 过滤英文选项生效时，过滤大于这个长度的英文。
+        /// </summary>
+        public int FilterEnglishLength = 0;
+
+        /// <summary>
+        /// 过滤数字选项生效时，过滤大于这个长度的数字。
+        /// </summary>
+        public int FilterNumericLength = 0;
     }
 }
