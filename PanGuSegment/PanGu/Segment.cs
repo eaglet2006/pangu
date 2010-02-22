@@ -506,6 +506,8 @@ namespace PanGu
                 _Options = options;
                 _Parameters = parameters;
 
+                Init();
+
                 if (_Options == null)
                 {
                     _Options = Setting.PanGuSettings.Config.MatchOptions;
@@ -515,8 +517,6 @@ namespace PanGu
                 {
                     _Parameters = Setting.PanGuSettings.Config.Parameters;
                 }
-
-                Init();
 
                 SuperLinkedList<WordInfo> result = PreSegment(text);
 
