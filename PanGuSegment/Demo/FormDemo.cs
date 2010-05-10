@@ -111,6 +111,12 @@ namespace Demo
                 labelRegRate.Text = ((double)(textBoxSource.Text.Length / watch.ElapsedMilliseconds) * 1000).ToString();
             }
 
+
+            if (checkBoxShowTimeOnly.Checked)
+            {
+                return;
+            }
+
             StringBuilder wordsString = new StringBuilder();
             foreach (WordInfo wordInfo in words)
             {

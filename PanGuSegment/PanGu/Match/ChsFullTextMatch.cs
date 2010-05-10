@@ -153,6 +153,8 @@ namespace PanGu.Match
         Node _Root = new Node();
 
         Framework.AppendList<Node> _LeafNodeList = new PanGu.Framework.AppendList<Node>();
+        int _MaxSpaceCount = 0;
+
         List<Dict.PositionLength[]> _AllCombinations = new List<PanGu.Dict.PositionLength[]>();
         Dict.WordDictionary _WordDict;
 
@@ -184,6 +186,12 @@ namespace PanGu.Match
             }
 
             int spaceCount = parent.SpaceCount + pl[curIndex].Position - (parent.PositionLength.Position + parent.PositionLength.Length);
+
+            if (spaceCount > _MaxSpaceCount)
+            {
+                return;
+            }
+
             int singleWordCount = parent.SingleWordCount + (pl[curIndex].Length == 1 ? 1 : 0);
             double freqSum = 0;
 
@@ -213,6 +221,11 @@ namespace PanGu.Match
             {
                 curNode.SpaceCount += stringLength - curNode.PositionLength.Position - curNode.PositionLength.Length;
                 _LeafNodeList.Add(curNode);
+
+                if (_MaxSpaceCount > curNode.SpaceCount)
+                {
+                    _MaxSpaceCount = curNode.SpaceCount;
+                }
             }
 
         }
@@ -497,6 +510,43 @@ namespace PanGu.Match
             _WordDict = wordDict;
         }
 
+        /// <summary>
+        /// 正向最大匹配得到一个初始的最大空隙数量
+        /// </summary>
+        /// <param name="positionLenArr"></param>
+        /// <returns></returns>
+        private int GetMaxSpaceCount(PanGu.Dict.PositionLength[] positionLenArr)
+        {
+            int maxSpaceCount = 0;
+            int lastPosition = 0;
+            int lastLen = 0;
+
+            foreach (PanGu.Dict.PositionLength pl in positionLenArr)
+            {
+                if (pl.Position > lastPosition)
+                {
+                    if (lastPosition + lastLen > pl.Position)
+                    {
+                        continue;
+                    }
+
+                    maxSpaceCount += pl.Position - (lastPosition + lastLen);
+
+                    lastPosition = pl.Position;
+                    lastLen = pl.Length;
+                }
+                else
+                {
+                    if (lastLen < pl.Length)
+                    {
+                        lastLen = pl.Length;
+                    }
+                }
+            }
+
+            return maxSpaceCount;
+        }
+
         public SuperLinkedList<WordInfo> Match(PanGu.Dict.PositionLength[] positionLenArr, string orginalText, int count)
         {
             if (_Options == null)
@@ -542,6 +592,8 @@ namespace PanGu.Match
                     return result;
                 }
             }
+
+            _MaxSpaceCount = 8;
 
             BuildTree(positionLenArr, orginalText.Length, count, _Root, 0);
 

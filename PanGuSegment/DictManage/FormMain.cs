@@ -265,7 +265,7 @@ namespace DictManage
                     }
 
                     BatchInsert(openFileDialogDict.FileName, frmEncoder.Encoding);
-                    MessageBox.Show("批量增加成功", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("批量增加成功,注意只有保存字典后,导入的单词才会生效!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     ShowCount();
                 }
                 catch(Exception e1)

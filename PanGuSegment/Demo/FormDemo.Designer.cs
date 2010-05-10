@@ -66,6 +66,7 @@
             this.numericUpDownFilterNumericLength = new System.Windows.Forms.NumericUpDown();
             this.checkBoxFilterNumeric = new System.Windows.Forms.CheckBox();
             this.checkBoxIgnoreCapital = new System.Windows.Forms.CheckBox();
+            this.checkBoxShowTimeOnly = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownRedundancy)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownUnknownWordsThreshold)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownFilterEnglishLength)).BeginInit();
@@ -447,11 +448,22 @@
             this.checkBoxIgnoreCapital.Text = "忽略英文大小写";
             this.checkBoxIgnoreCapital.UseVisualStyleBackColor = true;
             // 
+            // checkBoxShowTimeOnly
+            // 
+            this.checkBoxShowTimeOnly.AutoSize = true;
+            this.checkBoxShowTimeOnly.Location = new System.Drawing.Point(10, 616);
+            this.checkBoxShowTimeOnly.Name = "checkBoxShowTimeOnly";
+            this.checkBoxShowTimeOnly.Size = new System.Drawing.Size(110, 17);
+            this.checkBoxShowTimeOnly.TabIndex = 100;
+            this.checkBoxShowTimeOnly.Text = "仅显示分词时间";
+            this.checkBoxShowTimeOnly.UseVisualStyleBackColor = true;
+            // 
             // FormDemo
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(954, 679);
+            this.Controls.Add(this.checkBoxShowTimeOnly);
             this.Controls.Add(this.checkBoxIgnoreCapital);
             this.Controls.Add(this.labelFilterNumericLength);
             this.Controls.Add(this.numericUpDownFilterNumericLength);
@@ -541,6 +553,7 @@
         private System.Windows.Forms.NumericUpDown numericUpDownFilterNumericLength;
         private System.Windows.Forms.CheckBox checkBoxFilterNumeric;
         private System.Windows.Forms.CheckBox checkBoxIgnoreCapital;
+        private System.Windows.Forms.CheckBox checkBoxShowTimeOnly;
 
     }
 }

@@ -94,7 +94,8 @@ namespace PanGu.Dict
     {
         Dictionary<string, WordAttribute> _WordDict = new Dictionary<string, WordAttribute>();
 
-        Dictionary<char, byte[]> _FirstCharDict = new Dictionary<char,byte[]>();
+        Dictionary<char, WordAttribute> _FirstCharDict = new Dictionary<char, WordAttribute>();
+        Dictionary<uint, byte[]> _DoubleCharDict = new Dictionary<uint, byte[]>();
 
         internal Dict.ChsName ChineseName = null;
 
@@ -240,7 +241,21 @@ namespace PanGu.Dict
                     }
                 }
 
-                if (_FirstCharDict.TryGetValue(fst, out lenList))
+
+                WordAttribute fwa;
+                if (_FirstCharDict.TryGetValue(fst, out fwa))
+                {
+                    result.Add(new PositionLength(i, 1, fwa));
+                }
+
+                if (i >= keyText.Length - 1)
+                {
+                    continue;
+                }
+
+                uint doubleChar = (uint)(keyText[i] * 65536) + keyText[i+1];
+
+                if (_DoubleCharDict.TryGetValue(doubleChar, out lenList))
                 {
                     foreach (byte len in lenList)
                     {
@@ -257,6 +272,7 @@ namespace PanGu.Dict
                         string key = keyText.Substring(i, len);
 
                         WordAttribute wa;
+
                         if (_WordDict.TryGetValue(key, out wa))
                         {
                             if (chsNames != null)
@@ -291,22 +307,32 @@ namespace PanGu.Dict
         public void Load(String fileName)
         {
             _WordDict = new Dictionary<string, WordAttribute>();
-            _FirstCharDict = new Dictionary<char, byte[]>();
+            _FirstCharDict = new Dictionary<char, WordAttribute>();
+            _DoubleCharDict = new Dictionary<uint, byte[]>();
 
             foreach (WordAttribute wa in LoadFromBinFile(fileName).Dicts)
             {
                 string key = wa.Word.ToLower();
+
                 if (!_WordDict.ContainsKey(key))
                 {
                     _WordDict.Add(key, wa);
 
+                    if (key.Length == 1)
+                    {
+                        _FirstCharDict.Add(key[0], wa);
+                        continue;
+                    }
+
+                    uint doubleChar = ((uint)key[0] * 65536) + key[1];
+
                     byte[] wordLenArray;
-                    if (!_FirstCharDict.TryGetValue(key[0], out wordLenArray))
+                    if (!_DoubleCharDict.TryGetValue(doubleChar, out wordLenArray))
                     {
                         wordLenArray = new byte[4];
                         wordLenArray[0] = (byte)key.Length;
 
-                        _FirstCharDict.Add(key[0], wordLenArray);
+                        _DoubleCharDict.Add(doubleChar, wordLenArray);
                     }
                     else
                     {
@@ -337,7 +363,7 @@ namespace PanGu.Dict
                             wordLenArray = temp;
                             wordLenArray[i] = (byte)key.Length;
 
-                            _FirstCharDict[key[0]] = wordLenArray;
+                            _DoubleCharDict[doubleChar] = wordLenArray;
                         }
                     }
 
@@ -369,13 +395,21 @@ namespace PanGu.Dict
 
             _WordDict.Add(key, wa);
 
+            if (key.Length == 1)
+            {
+                _FirstCharDict.Add(key[0], wa);
+                return;
+            }
+
+            uint doubleChar = (uint)(key[0] * 65536) + key[1];
+
             byte[] wordLenArray;
-            if (!_FirstCharDict.TryGetValue(key[0], out wordLenArray))
+            if (!_DoubleCharDict.TryGetValue(doubleChar, out wordLenArray))
             {
                 wordLenArray = new byte[4];
                 wordLenArray[0] = (byte)key.Length;
 
-                _FirstCharDict.Add(key[0], wordLenArray);
+                _DoubleCharDict.Add(doubleChar, wordLenArray);
             }
             else
             {
@@ -406,9 +440,10 @@ namespace PanGu.Dict
                     wordLenArray = temp;
                     wordLenArray[i] = (byte)key.Length;
 
-                    _FirstCharDict[key[0]] = wordLenArray;
+                    _DoubleCharDict[doubleChar] = wordLenArray;
                 }
             }
+
 
         }
 
