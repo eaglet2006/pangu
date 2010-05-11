@@ -150,10 +150,25 @@ namespace PanGu.Match
             #endregion
         }
 
+        struct NodeForTree
+        {
+            public Node Node;
+            public int CurIndex;
+
+            public NodeForTree(Node node, int curIndex)
+            {
+                Node = node;
+                CurIndex = curIndex;
+            }
+        }
+
         Node _Root = new Node();
 
         Framework.AppendList<Node> _LeafNodeList = new PanGu.Framework.AppendList<Node>();
         int _MaxSpaceCount = 0;
+        Dict.PositionLength[] _PositionLengthArr;
+        int _InputStringLength;
+        int _PositionLengthArrCount;
 
         List<Dict.PositionLength[]> _AllCombinations = new List<PanGu.Dict.PositionLength[]>();
         Dict.WordDictionary _WordDict;
@@ -168,7 +183,7 @@ namespace PanGu.Match
         /// <param name="count">position length list count</param>
         /// <param name="parent">parent node</param>
         /// <param name="curIndex">current index of position length list</param>
-        private void BuildTree(Dict.PositionLength[] pl, int stringLength, int count, Node parent, int curIndex)
+        private void BuildTree(Node parent, int curIndex)
         {
             //嵌套太多的情况一般很少发生，如果发生，强行中断，以免造成博弈树遍历层次过多
             //降低系统效率
@@ -177,49 +192,49 @@ namespace PanGu.Match
                 return;
             }
 
-            if (curIndex < count - 1)
+            if (curIndex < _PositionLengthArrCount - 1)
             {
-                if (pl[curIndex + 1].Position == pl[curIndex].Position)
+                if (_PositionLengthArr[curIndex + 1].Position == _PositionLengthArr[curIndex].Position)
                 {
-                    BuildTree(pl, stringLength, count, parent, curIndex + 1);
+                    BuildTree(parent, curIndex + 1);
                 }
             }
 
-            int spaceCount = parent.SpaceCount + pl[curIndex].Position - (parent.PositionLength.Position + parent.PositionLength.Length);
+            int spaceCount = parent.SpaceCount + _PositionLengthArr[curIndex].Position - (parent.PositionLength.Position + parent.PositionLength.Length);
 
             if (spaceCount > _MaxSpaceCount)
             {
                 return;
             }
 
-            int singleWordCount = parent.SingleWordCount + (pl[curIndex].Length == 1 ? 1 : 0);
+            int singleWordCount = parent.SingleWordCount + (_PositionLengthArr[curIndex].Length == 1 ? 1 : 0);
             double freqSum = 0;
 
             if (_Options != null)
             {
                 if (_Options.FrequencyFirst)
                 {
-                    freqSum = parent.FreqSum + pl[curIndex].WordAttr.Frequency;
+                    freqSum = parent.FreqSum + _PositionLengthArr[curIndex].WordAttr.Frequency;
                 }
             }
 
-            Node curNode = new Node(pl[curIndex], parent, parent.AboveCount + 1, spaceCount, singleWordCount, freqSum);
+            Node curNode = new Node(_PositionLengthArr[curIndex], parent, parent.AboveCount + 1, spaceCount, singleWordCount, freqSum);
 
             int cur = curIndex + 1;
-            while (cur < count)
+            while (cur < _PositionLengthArrCount)
             {
-                if (pl[cur].Position >= pl[curIndex].Position + pl[curIndex].Length)
+                if (_PositionLengthArr[cur].Position >= _PositionLengthArr[curIndex].Position + _PositionLengthArr[curIndex].Length)
                 {
-                    BuildTree(pl, stringLength, count, curNode, cur);
+                    BuildTree(curNode, cur);
                     break;
                 }
 
                 cur++;
             }
 
-            if (cur >= count)
+            if (cur >= _PositionLengthArrCount)
             {
-                curNode.SpaceCount += stringLength - curNode.PositionLength.Position - curNode.PositionLength.Length;
+                curNode.SpaceCount += _InputStringLength - curNode.PositionLength.Position - curNode.PositionLength.Length;
                 _LeafNodeList.Add(curNode);
 
                 if (_MaxSpaceCount > curNode.SpaceCount)
@@ -228,6 +243,95 @@ namespace PanGu.Match
                 }
             }
 
+        }
+
+
+        private void BuildTreeStack(Node parent, int curIndex)
+        {
+            NodeForTree[] stack = new NodeForTree[_PositionLengthArrCount];
+            int stackPoint = -1;
+
+            //Stack<NodeForTree> stack = new Stack<NodeForTree>(_PositionLengthArrCount);
+
+            stackPoint++;
+            stack[stackPoint] = new NodeForTree(parent, curIndex);
+
+            while (stackPoint >= 0)
+            {
+                NodeForTree curNodeForTree = stack[stackPoint];
+                stackPoint--;
+                parent = curNodeForTree.Node;
+                curIndex = curNodeForTree.CurIndex;
+
+                //嵌套太多的情况一般很少发生，如果发生，强行中断，以免造成博弈树遍历层次过多
+                //降低系统效率
+                if (_LeafNodeList.Count > 8192)
+                {
+                    return;
+                }
+
+                if (curIndex < _PositionLengthArrCount - 1)
+                {
+                    if (_PositionLengthArr[curIndex + 1].Position == _PositionLengthArr[curIndex].Position)
+                    {
+                        //BuildTree(parent, curIndex + 1);
+                        stackPoint++;
+                        stack[stackPoint] = new NodeForTree(parent, curIndex + 1);
+                    }
+                }
+
+                int spaceCount = parent.SpaceCount + _PositionLengthArr[curIndex].Position - (parent.PositionLength.Position + parent.PositionLength.Length);
+
+                if (spaceCount > _MaxSpaceCount)
+                {
+                    continue;
+                }
+
+                int singleWordCount = parent.SingleWordCount + (_PositionLengthArr[curIndex].Length == 1 ? 1 : 0);
+                double freqSum = 0;
+
+                if (_Options != null)
+                {
+                    if (_Options.FrequencyFirst)
+                    {
+                        freqSum = parent.FreqSum + _PositionLengthArr[curIndex].WordAttr.Frequency;
+                    }
+                }
+
+                Node curNode = new Node(_PositionLengthArr[curIndex], parent, parent.AboveCount + 1, spaceCount, singleWordCount, freqSum);
+
+                int cur = curIndex + 1;
+                bool find = false;
+                while (cur < _PositionLengthArrCount)
+                {
+                    if (_PositionLengthArr[cur].Position >= _PositionLengthArr[curIndex].Position + _PositionLengthArr[curIndex].Length)
+                    {
+                        //BuildTree(curNode, cur);
+                        stackPoint++;
+                        stack[stackPoint] = new NodeForTree(curNode, cur);
+                        find = true;
+                        break;
+                    }
+
+                    cur++;
+                }
+
+                if (find)
+                {
+                    continue;
+                }
+
+                if (cur >= _PositionLengthArrCount)
+                {
+                    curNode.SpaceCount += _InputStringLength - curNode.PositionLength.Position - curNode.PositionLength.Length;
+                    _LeafNodeList.Add(curNode);
+
+                    if (_MaxSpaceCount > curNode.SpaceCount)
+                    {
+                        _MaxSpaceCount = curNode.SpaceCount;
+                    }
+                }
+            }
         }
 
         #region IChsFullTextMatch Members
@@ -595,7 +699,13 @@ namespace PanGu.Match
 
             _MaxSpaceCount = 8;
 
-            BuildTree(positionLenArr, orginalText.Length, count, _Root, 0);
+            //_MaxSpaceCount = GetMaxSpaceCount(positionLenArr);
+
+            _PositionLengthArr = positionLenArr;
+            _InputStringLength = orginalText.Length;
+            _PositionLengthArrCount = count;
+
+            BuildTree(_Root, 0);
 
             Node[] leafNodeArray = _LeafNodeList.Items;
 
