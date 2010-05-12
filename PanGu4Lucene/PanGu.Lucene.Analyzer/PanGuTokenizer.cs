@@ -65,13 +65,13 @@ namespace Lucene.Net.Analysis.PanGu
                 InitPanGuSegment();
             }
 
-            _InputText = input.ReadToEnd();
+            _InputText = base.input.ReadToEnd();
 
             if (string.IsNullOrEmpty(_InputText))
             {
                 char[] readBuf = new char[1024];
 
-                int relCount = input.Read(readBuf, 0, readBuf.Length);
+                int relCount = base.input.Read(readBuf, 0, readBuf.Length);
 
                 StringBuilder inputStr = new StringBuilder(readBuf.Length);
 
