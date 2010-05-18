@@ -438,7 +438,13 @@ namespace PanGu
                     case WordType.Numeric:
                         cur.Value.Word = ConvertChineseCapitalToAsiic(cur.Value.Word);
                         cur.Value.Rank = _Parameters.NumericRank;
-                        cur = cur.Next;
+
+                        if (!MergeEnglishSpecialWord(text, result, ref cur))
+                        {
+                            cur = cur.Next;
+                        }
+
+                        //cur = cur.Next;
                         break;
                     case WordType.Symbol:
                         cur.Value.Rank = _Parameters.SymbolRank;

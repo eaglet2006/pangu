@@ -110,7 +110,7 @@ namespace PanGu.Dict
                 }
                 else
                 {
-                    return _WordDict.Count;
+                    return _WordDict.Count + _FirstCharDict.Count + _DoubleCharDict.Count;
                 }
             }
         }
@@ -169,6 +169,32 @@ namespace PanGu.Dict
 
                 fs.Write(version, 0, version.Length);
 
+                foreach (WordAttribute wa in _FirstCharDict.Values)
+                {
+                    byte[] word = System.Text.Encoding.UTF8.GetBytes(wa.Word);
+                    byte[] pos = System.BitConverter.GetBytes((int)wa.Pos);
+                    byte[] frequency = System.BitConverter.GetBytes(wa.Frequency);
+                    byte[] length = System.BitConverter.GetBytes(word.Length + frequency.Length + pos.Length);
+
+                    fs.Write(length, 0, length.Length);
+                    fs.Write(word, 0, word.Length);
+                    fs.Write(pos, 0, pos.Length);
+                    fs.Write(frequency, 0, frequency.Length);
+                }
+
+                foreach (WordAttribute wa in _DoubleCharDict.Values)
+                {
+                    byte[] word = System.Text.Encoding.UTF8.GetBytes(wa.Word);
+                    byte[] pos = System.BitConverter.GetBytes((int)wa.Pos);
+                    byte[] frequency = System.BitConverter.GetBytes(wa.Frequency);
+                    byte[] length = System.BitConverter.GetBytes(word.Length + frequency.Length + pos.Length);
+
+                    fs.Write(length, 0, length.Length);
+                    fs.Write(word, 0, word.Length);
+                    fs.Write(pos, 0, pos.Length);
+                    fs.Write(frequency, 0, frequency.Length);
+                }
+
                 foreach (WordAttribute wa in _WordDict.Values)
                 {
                     byte[] word = System.Text.Encoding.UTF8.GetBytes(wa.Word);
@@ -193,14 +219,29 @@ namespace PanGu.Dict
         {
             WordAttribute wa;
 
-            if (_WordDict.TryGetValue(word.ToLower(), out wa))
+            if (word.Length == 1)
+            {
+                if (_FirstCharDict.TryGetValue(word.ToLower()[0], out wa))
+                {
+                    return wa;
+                }
+            }
+            else if (word.Length == 2)
+            {
+                word = word.ToLower();
+                uint doubleChar = ((uint)word[0] * 65536) + word[1];
+                if (_DoubleCharDict.TryGetValue(doubleChar, out wa))
+                {
+                    return wa;
+                }
+            }
+            else if (_WordDict.TryGetValue(word.ToLower(), out wa))
             {
                 return wa;
             }
-            else
-            {
-                return null;
-            }
+
+            return null;
+
         }
 
         public Framework.AppendList<PositionLength> GetAllMatchs(string text, bool chineseNameIdentify)
@@ -543,6 +584,28 @@ namespace PanGu.Dict
             Debug.Assert(_WordDict != null);
 
             List<SearchWordResult> result = new List<SearchWordResult>();
+
+            foreach (WordAttribute wa in _FirstCharDict.Values)
+            {
+                if (wa.Word.Contains(key))
+                {
+                    SearchWordResult wordResult = new SearchWordResult();
+                    wordResult.Word = wa;
+                    wordResult.SimilarRatio = (float)key.Length / (float)wa.Word.Length;
+                    result.Add(wordResult);
+                }
+            }
+
+            foreach (WordAttribute wa in _DoubleCharDict.Values)
+            {
+                if (wa.Word.Contains(key))
+                {
+                    SearchWordResult wordResult = new SearchWordResult();
+                    wordResult.Word = wa;
+                    wordResult.SimilarRatio = (float)key.Length / (float)wa.Word.Length;
+                    result.Add(wordResult);
+                }
+            }
 
             foreach (WordAttribute wa in _WordDict.Values)
             {
