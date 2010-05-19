@@ -73,6 +73,17 @@ namespace PanGu.Match
         public int EnglishRank = 5;
 
         /// <summary>
+        /// 英文词汇小写的权值
+        /// </summary>
+        public int EnglishLowerRank = 3;
+
+        /// <summary>
+        /// 英文词汇词根的权值
+        /// </summary>
+        public int EnglishStemRank = 2;
+
+
+        /// <summary>
         /// 符号的权值
         /// </summary>
         public int SymbolRank = 1;

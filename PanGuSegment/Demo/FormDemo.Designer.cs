@@ -67,6 +67,7 @@
             this.checkBoxFilterNumeric = new System.Windows.Forms.CheckBox();
             this.checkBoxIgnoreCapital = new System.Windows.Forms.CheckBox();
             this.checkBoxShowTimeOnly = new System.Windows.Forms.CheckBox();
+            this.checkBoxEnglishSegment = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownRedundancy)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownUnknownWordsThreshold)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownFilterEnglishLength)).BeginInit();
@@ -458,11 +459,22 @@
             this.checkBoxShowTimeOnly.Text = "仅显示分词时间";
             this.checkBoxShowTimeOnly.UseVisualStyleBackColor = true;
             // 
+            // checkBoxEnglishSegment
+            // 
+            this.checkBoxEnglishSegment.AutoSize = true;
+            this.checkBoxEnglishSegment.Location = new System.Drawing.Point(191, 645);
+            this.checkBoxEnglishSegment.Name = "checkBoxEnglishSegment";
+            this.checkBoxEnglishSegment.Size = new System.Drawing.Size(74, 17);
+            this.checkBoxEnglishSegment.TabIndex = 101;
+            this.checkBoxEnglishSegment.Text = "英文分词";
+            this.checkBoxEnglishSegment.UseVisualStyleBackColor = true;
+            // 
             // FormDemo
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(954, 679);
+            this.Controls.Add(this.checkBoxEnglishSegment);
             this.Controls.Add(this.checkBoxShowTimeOnly);
             this.Controls.Add(this.checkBoxIgnoreCapital);
             this.Controls.Add(this.labelFilterNumericLength);
@@ -554,6 +566,7 @@
         private System.Windows.Forms.CheckBox checkBoxFilterNumeric;
         private System.Windows.Forms.CheckBox checkBoxIgnoreCapital;
         private System.Windows.Forms.CheckBox checkBoxShowTimeOnly;
+        private System.Windows.Forms.CheckBox checkBoxEnglishSegment;
 
     }
 }

@@ -36,6 +36,7 @@ namespace PanGu
 
         static object _LockObj = new object();
         static bool _Inited = false;
+        private static Dictionary<string, string> _InfinitiveVerbTable = null;
 
         internal static Dict.WordDictionary _WordDictionary = null;
         internal static Dict.ChsName _ChsName = null;
@@ -272,6 +273,30 @@ namespace PanGu
             }
         }
 
+        private string GetStem(string word)
+        {
+            string stem;
+            if (_InfinitiveVerbTable.TryGetValue(word, out stem))
+            {
+                return stem;
+            }
+
+            porter.Stemmer s = new porter.Stemmer();
+
+            foreach (char ch in word)
+            {
+                if (char.IsLetter((char)ch))
+                {
+                    s.add(ch);
+                }
+            }
+
+            s.stem();
+
+            return s.ToString();
+
+        }
+
         private SuperLinkedList<WordInfo> PreSegment(String text)
         {
             SuperLinkedList<WordInfo> result = GetInitSegment(text);
@@ -376,6 +401,28 @@ namespace PanGu
                             cur.Value.Word = cur.Value.Word.ToLower();
                         }
 
+                        if (_Options.EnglishSegment)
+                        {
+                            string lower = cur.Value.Word.ToLower();
+
+                            if (lower != cur.Value.Word)
+                            {
+                                result.AddBefore(cur, new WordInfo(lower, cur.Value.Position, POS.POS_A_NX, 1,
+                                    _Parameters.EnglishLowerRank, WordType.English, WordType.English));
+                            }
+
+                            string stem = GetStem(lower);
+
+                            if (!string.IsNullOrEmpty(stem))
+                            {
+                                if (lower != stem)
+                                {
+                                    result.AddBefore(cur, new WordInfo(stem, cur.Value.Position, POS.POS_A_NX, 1,
+                                        _Parameters.EnglishStemRank, WordType.English, WordType.English));
+                                }
+                            }
+                        }
+
                         if (_Options.MultiDimensionality)
                         {
                             if (Framework.Regex.GetMatchStrings(cur.Value.Word, PATTERNS, true, out output))
@@ -414,12 +461,16 @@ namespace PanGu
                                             wi = new WordInfo(splitWord, POS.POS_A_M, 1);
                                             wi.Position = position;
                                             wi.Rank = _Parameters.NumericRank;
+                                            wi.OriginalWordType = WordType.English;
+                                            wi.WordType = WordType.Numeric;
                                         }
                                         else
                                         {
                                             wi = new WordInfo(splitWord, POS.POS_A_NX, 1);
                                             wi.Position = position;
                                             wi.Rank = _Parameters.EnglishRank;
+                                            wi.OriginalWordType = WordType.English;
+                                            wi.WordType = WordType.English;
                                         }
 
                                         result.AddBefore(cur, wi);
@@ -560,6 +611,46 @@ namespace PanGu
             _DictLoader = new PanGu.Dict.DictionaryLoader(Setting.PanGuSettings.Config.GetDictionaryPath());
         }
 
+        private static void InitInfinitiveVerbTable()
+        {
+            if (_InfinitiveVerbTable != null)
+            {
+                return;
+            }
+
+            _InfinitiveVerbTable = new Dictionary<string, string>();
+
+            using (System.IO.StringReader sr = new System.IO.StringReader(AnalyzerResource.INFINITIVE))
+            {
+
+                string line = sr.ReadLine();
+
+                while (!string.IsNullOrEmpty(line))
+                {
+                    string[] strs = Framework.Regex.Split(line, "\t+");
+
+                    if (strs.Length != 3)
+                    {
+                        continue;
+                    }
+
+                    for (int i = 1; i < 3; i++)
+                    {
+                        string key = strs[i].ToLower().Trim();
+
+                        if (!_InfinitiveVerbTable.ContainsKey(key))
+                        {
+                            _InfinitiveVerbTable.Add(key, strs[0].Trim().ToLower());
+                        }
+                    }
+
+                    line = sr.ReadLine();
+                }
+            }
+
+        }
+
+
         public static void Init()
         {
             Init(null);
@@ -573,6 +664,8 @@ namespace PanGu
                 {
                     return;
                 }
+
+                InitInfinitiveVerbTable();
 
                 if (fileName == null)
                 {

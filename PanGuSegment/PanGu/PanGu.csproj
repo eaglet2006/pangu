@@ -40,6 +40,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AnalyzerResource.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>AnalyzerResource.resx</DependentUpon>
+    </Compile>
     <Compile Include="Dict\DictionaryLoader.cs" />
     <Compile Include="Dict\StopWord.cs" />
     <Compile Include="Dict\WordDictionary.cs" />
@@ -47,6 +52,7 @@
     <Compile Include="Framework\DFA.cs" />
     <Compile Include="Framework\Lexical.cs" />
     <Compile Include="Framework\Lock.cs" />
+    <Compile Include="Framework\PorterStemmer.cs" />
     <Compile Include="Framework\QuickSort.cs" />
     <Compile Include="Framework\Regex.cs" />
     <Compile Include="Framework\File.cs" />
@@ -66,6 +72,13 @@
     <Compile Include="Setting\SettingLoader.cs" />
     <Compile Include="WordAttribute.cs" />
     <Compile Include="WordInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="AnalyzerResource.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>AnalyzerResource.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

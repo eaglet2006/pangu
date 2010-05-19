@@ -68,5 +68,11 @@ namespace PanGu.Match
         /// 忽略英文大小写
         /// </summary>
         public bool IgnoreCapital = false;
+
+        /// <summary>
+        /// 英文分词
+        /// </summary>
+        public bool EnglishSegment = false;
+
     }
 }

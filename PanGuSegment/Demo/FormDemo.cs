@@ -69,6 +69,7 @@ namespace Demo
             checkBoxFilterEnglish.Checked = options.FilterEnglish;
             checkBoxFilterNumeric.Checked = options.FilterNumeric;
             checkBoxIgnoreCapital.Checked = options.IgnoreCapital;
+            checkBoxEnglishSegment.Checked = options.EnglishSegment;
 
             if (checkBoxMultiSelect.Checked)
             {
@@ -166,6 +167,7 @@ namespace Demo
             _Options.FilterEnglish = checkBoxFilterEnglish.Checked;
             _Options.FilterNumeric = checkBoxFilterNumeric.Checked;
             _Options.IgnoreCapital = checkBoxIgnoreCapital.Checked;
+            _Options.EnglishSegment = checkBoxEnglishSegment.Checked;
 
             _Parameters.Redundancy = (int)numericUpDownRedundancy.Value;
             _Parameters.FilterEnglishLength = (int)numericUpDownFilterEnglishLength.Value;

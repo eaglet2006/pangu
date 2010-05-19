@@ -43,6 +43,15 @@ namespace PanGu
         {
         }
 
+        public WordInfo(string word, int position, POS pos, double frequency, int rank, WordType wordTye, WordType originalWordType)
+            : base(word, pos, frequency)
+        {
+            Position = position;
+            WordType = wordTye;
+            OriginalWordType = originalWordType;
+            Rank = rank;
+        }
+
         public WordInfo(string word, POS pos, double frequency)
             :base(word, pos, frequency)
         {
