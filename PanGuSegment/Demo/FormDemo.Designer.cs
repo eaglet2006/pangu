@@ -68,6 +68,9 @@
             this.checkBoxIgnoreCapital = new System.Windows.Forms.CheckBox();
             this.checkBoxShowTimeOnly = new System.Windows.Forms.CheckBox();
             this.checkBoxEnglishSegment = new System.Windows.Forms.CheckBox();
+            this.checkBoxSynonymOutput = new System.Windows.Forms.CheckBox();
+            this.checkBoxWildcard = new System.Windows.Forms.CheckBox();
+            this.checkBoxWildcardSegment = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownRedundancy)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownUnknownWordsThreshold)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownFilterEnglishLength)).BeginInit();
@@ -469,11 +472,44 @@
             this.checkBoxEnglishSegment.Text = "英文分词";
             this.checkBoxEnglishSegment.UseVisualStyleBackColor = true;
             // 
+            // checkBoxSynonymOutput
+            // 
+            this.checkBoxSynonymOutput.AutoSize = true;
+            this.checkBoxSynonymOutput.Location = new System.Drawing.Point(297, 645);
+            this.checkBoxSynonymOutput.Name = "checkBoxSynonymOutput";
+            this.checkBoxSynonymOutput.Size = new System.Drawing.Size(86, 17);
+            this.checkBoxSynonymOutput.TabIndex = 102;
+            this.checkBoxSynonymOutput.Text = "输出同义词";
+            this.checkBoxSynonymOutput.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxWildcard
+            // 
+            this.checkBoxWildcard.AutoSize = true;
+            this.checkBoxWildcard.Location = new System.Drawing.Point(389, 645);
+            this.checkBoxWildcard.Name = "checkBoxWildcard";
+            this.checkBoxWildcard.Size = new System.Drawing.Size(86, 17);
+            this.checkBoxWildcard.TabIndex = 103;
+            this.checkBoxWildcard.Text = "通配符匹配";
+            this.checkBoxWildcard.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxWildcardSegment
+            // 
+            this.checkBoxWildcardSegment.AutoSize = true;
+            this.checkBoxWildcardSegment.Location = new System.Drawing.Point(494, 645);
+            this.checkBoxWildcardSegment.Name = "checkBoxWildcardSegment";
+            this.checkBoxWildcardSegment.Size = new System.Drawing.Size(182, 17);
+            this.checkBoxWildcardSegment.TabIndex = 104;
+            this.checkBoxWildcardSegment.Text = "对通配符匹配出来的词再分词";
+            this.checkBoxWildcardSegment.UseVisualStyleBackColor = true;
+            // 
             // FormDemo
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(954, 679);
+            this.Controls.Add(this.checkBoxWildcardSegment);
+            this.Controls.Add(this.checkBoxWildcard);
+            this.Controls.Add(this.checkBoxSynonymOutput);
             this.Controls.Add(this.checkBoxEnglishSegment);
             this.Controls.Add(this.checkBoxShowTimeOnly);
             this.Controls.Add(this.checkBoxIgnoreCapital);
@@ -567,6 +603,9 @@
         private System.Windows.Forms.CheckBox checkBoxIgnoreCapital;
         private System.Windows.Forms.CheckBox checkBoxShowTimeOnly;
         private System.Windows.Forms.CheckBox checkBoxEnglishSegment;
+        private System.Windows.Forms.CheckBox checkBoxSynonymOutput;
+        private System.Windows.Forms.CheckBox checkBoxWildcard;
+        private System.Windows.Forms.CheckBox checkBoxWildcardSegment;
 
     }
 }

@@ -70,6 +70,9 @@ namespace Demo
             checkBoxFilterNumeric.Checked = options.FilterNumeric;
             checkBoxIgnoreCapital.Checked = options.IgnoreCapital;
             checkBoxEnglishSegment.Checked = options.EnglishSegment;
+            checkBoxSynonymOutput.Checked = options.SynonymOutput;
+            checkBoxWildcard.Checked = options.WildcardOutput;
+            checkBoxWildcardSegment.Checked = options.WildcardSegment;
 
             if (checkBoxMultiSelect.Checked)
             {
@@ -129,14 +132,14 @@ namespace Demo
                 if (showPosition)
                 {
 
-                    if (_Options.MultiDimensionality)
-                    {
-                        wordsString.AppendFormat("{0}({1},{2})/", wordInfo.Word, wordInfo.Position, wordInfo.Rank);
-                    }
-                    else
-                    {
-                        wordsString.AppendFormat("{0}({1})/", wordInfo.Word, wordInfo.Position);
-                    }
+                    wordsString.AppendFormat("{0}({1},{2})/", wordInfo.Word, wordInfo.Position, wordInfo.Rank);
+                    //if (_Options.MultiDimensionality)
+                    //{
+                    //}
+                    //else
+                    //{
+                    //    wordsString.AppendFormat("{0}({1})/", wordInfo.Word, wordInfo.Position);
+                    //}
                 }
                 else
                 {
@@ -168,6 +171,9 @@ namespace Demo
             _Options.FilterNumeric = checkBoxFilterNumeric.Checked;
             _Options.IgnoreCapital = checkBoxIgnoreCapital.Checked;
             _Options.EnglishSegment = checkBoxEnglishSegment.Checked;
+            _Options.SynonymOutput = checkBoxSynonymOutput.Checked;
+            _Options.WildcardOutput = checkBoxWildcard.Checked;
+            _Options.WildcardSegment = checkBoxWildcardSegment.Checked;
 
             _Parameters.Redundancy = (int)numericUpDownRedundancy.Value;
             _Parameters.FilterEnglishLength = (int)numericUpDownFilterEnglishLength.Value;

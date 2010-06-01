@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Reflection;
 
 namespace PanGu.Match
 {
@@ -95,6 +96,16 @@ namespace PanGu.Match
         public int SimplifiedTraditionalRank = 1;
 
         /// <summary>
+        /// 同义词权值
+        /// </summary>
+        public int SynonymRank = 1;
+
+        /// <summary>
+        /// 通配符匹配结果的权值
+        /// </summary>
+        public int WildcardRank = 1;
+
+        /// <summary>
         /// 过滤英文选项生效时，过滤大于这个长度的英文。
         /// </summary>
         public int FilterEnglishLength = 0;
@@ -103,5 +114,18 @@ namespace PanGu.Match
         /// 过滤数字选项生效时，过滤大于这个长度的数字。
         /// </summary>
         public int FilterNumericLength = 0;
+
+        public MatchParameter Clone()
+        {
+            MatchParameter result = new MatchParameter();
+
+            foreach (FieldInfo fi in this.GetType().GetFields())
+            {
+                object value = fi.GetValue(this);
+                fi.SetValue(result, value);
+            }
+
+            return result;
+        }
     }
 }

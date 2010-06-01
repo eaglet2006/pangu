@@ -24,6 +24,8 @@ namespace PanGu.Dict
         private DateTime _ChsName1LastTime;
         private DateTime _ChsName2LastTime;
         private DateTime _StopWordLastTime;
+        private DateTime _SynonymLastTime;
+        private DateTime _WildcardLastTime;
 
         private Thread _Thread;
 
@@ -40,6 +42,8 @@ namespace PanGu.Dict
             _ChsName1LastTime = GetLastTime(Dict.ChsName.ChsDoubleName1FileName);
             _ChsName2LastTime = GetLastTime(Dict.ChsName.ChsDoubleName2FileName);
             _StopWordLastTime = GetLastTime("Stopword.txt");
+            _SynonymLastTime = GetLastTime(Dict.Synonym.SynonymFileName);
+            _WildcardLastTime = GetLastTime(Dict.Wildcard.WildcardFileName);
 
             _Thread = new Thread(MonitorDictionary);
             _Thread.IsBackground = true;
@@ -83,6 +87,32 @@ namespace PanGu.Dict
                 return false;
             }
         }
+
+        private bool SynonymChanged()
+        {
+            try
+            {
+                return _SynonymLastTime != GetLastTime(Dict.Synonym.SynonymFileName);
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private bool WildcardChanged()
+        {
+            try
+            {
+                return _WildcardLastTime != GetLastTime(Dict.Wildcard.WildcardFileName);
+            }
+            catch
+            {
+                return false;
+            }
+
+        }
+
 
         private void MonitorDictionary()
         {
@@ -135,6 +165,39 @@ namespace PanGu.Dict
                         finally
                         {
                             DictionaryLoader.Lock.Leave();
+                        }
+                    }
+
+                    if (Segment._Synonym.Inited)
+                    {
+                        if (SynonymChanged())
+                        {
+                            try
+                            {
+                                DictionaryLoader.Lock.Enter(PanGu.Framework.Lock.Mode.Mutex);
+
+                                Segment._Synonym.Load(_DictionaryDir);
+                                _SynonymLastTime = GetLastTime(Dict.Synonym.SynonymFileName);
+                            }
+                            finally
+                            {
+                                DictionaryLoader.Lock.Leave();
+                            }
+                        }
+                    }
+
+                    if (Segment._Wildcard.Inited)
+                    {
+                        if (WildcardChanged())
+                        {
+                            try
+                            {
+                                Segment._Wildcard.Load(_DictionaryDir);
+                                _WildcardLastTime = GetLastTime(Dict.Wildcard.WildcardFileName);
+                            }
+                            finally
+                            {
+                            }
                         }
                     }
 

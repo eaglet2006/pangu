@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
+using System.Reflection;
 
 namespace PanGu.Match
 {
@@ -74,5 +75,38 @@ namespace PanGu.Match
         /// </summary>
         public bool EnglishSegment = false;
 
+        /// <summary>
+        /// 同义词输出
+        /// </summary>
+        /// <remarks>
+        /// 同义词输出功能一般用于对搜索字符串的分词，不建议在索引时使用
+        /// </remarks>
+        public bool SynonymOutput = false;
+
+        /// <summary>
+        /// 通配符匹配输出
+        /// </summary>
+        /// <remarks>
+        /// 同义词输出功能一般用于对搜索字符串的分词，不建议在索引时使用
+        /// </remarks>
+        public bool WildcardOutput = false;
+
+        /// <summary>
+        /// 对通配符匹配的结果分词
+        /// </summary>
+        public bool WildcardSegment = false;
+
+        public MatchOptions Clone()
+        {
+            MatchOptions result = new MatchOptions();
+
+            foreach (FieldInfo fi in this.GetType().GetFields())
+            {
+                object value = fi.GetValue(this);
+                fi.SetValue(result, value);
+            }
+
+            return result;
+        }
     }
 }

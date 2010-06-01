@@ -41,6 +41,8 @@ namespace PanGu
         internal static Dict.WordDictionary _WordDictionary = null;
         internal static Dict.ChsName _ChsName = null;
         internal static Dict.StopWord _StopWord = null;
+        internal static Dict.Synonym _Synonym = null;
+        internal static Dict.Wildcard _Wildcard = null;
 
         static Dict.DictionaryLoader _DictLoader;
         private Match.MatchOptions _Options;
@@ -539,6 +541,87 @@ namespace PanGu
             }
         }
 
+        private void ProcessAfterSegment(SuperLinkedList<WordInfo> result)
+        {
+            //匹配同义词
+            if (_Options.SynonymOutput)
+            {
+                SuperLinkedListNode<WordInfo> node = result.First;
+
+                while (node != null)
+                {
+                    List<string> synonyms = _Synonym.GetSynonyms(node.Value.Word);
+
+                    if (synonyms != null)
+                    {
+                        foreach (string word in synonyms)
+                        {
+                            result.AddBefore(node, new WordInfo(word, node.Value.Position,
+                                node.Value.Pos, node.Value.Frequency, _Parameters.SymbolRank,
+                                WordType.Synonym, node.Value.WordType));
+                        }
+                    }
+
+                    node = node.Next;
+                }
+            }
+
+            //通配符匹配
+            if (_Options.WildcardOutput)
+            {
+                SuperLinkedListNode<WordInfo> node = result.First;
+
+                while (node != null)
+                {
+                    List<Dict.Wildcard.WildcardInfo> wildcards =
+                        _Wildcard.GetWildcards(node.Value.Word);
+
+                    if (wildcards.Count > 0)
+                    {
+                        for (int i = 0; i < wildcards.Count; i++)
+                        {
+                            Dict.Wildcard.WildcardInfo wildcardInfo = wildcards[i];
+
+                            int count = wildcardInfo.Segments.Count;
+                            if (!_Options.WildcardSegment)
+                            {
+                                count = 1;
+                            }
+
+                            for (int j = 0; j < count; j++)
+                            {
+                                WordInfo wi = wildcardInfo.Segments[j];
+
+                                if (wi.Word == node.Value.Word)
+                                {
+                                    continue;
+                                }
+
+                                wi.Rank = _Parameters.WildcardRank;
+                                wi.Position += node.Value.Position;
+                                result.AddBefore(node, wi);
+                            }
+                        }
+
+                    }
+
+                    node = node.Next;
+
+                    if (node != null)
+                    {
+                        //过滤英文分词时多元分词重复输出的问题
+                        if (node.Previous.Value.Word.ToLower() == node.Value.Word.ToLower())
+                        {
+                            node = node.Next;
+                        }
+                    }
+
+                }
+
+                
+            }
+        }
+
         #region Public methods
         public ICollection<WordInfo> DoSegment(string text)
         {
@@ -582,6 +665,8 @@ namespace PanGu
                     FilterStopWord(result);
                 }
 
+                ProcessAfterSegment(result);
+
                 return result;
             }
             finally
@@ -603,10 +688,26 @@ namespace PanGu
             _ChsName = new PanGu.Dict.ChsName();
             _ChsName.LoadChsName(Setting.PanGuSettings.Config.GetDictionaryPath());
 
+
             _WordDictionary.ChineseName = _ChsName;
 
             _StopWord = new PanGu.Dict.StopWord();
             _StopWord.LoadStopwordsDict(dir + "Stopword.txt");
+
+            _Synonym = new PanGu.Dict.Synonym();
+
+            if (Setting.PanGuSettings.Config.MatchOptions.SynonymOutput)
+            {
+                _Synonym.Load(dir);
+            }
+
+            _Wildcard = new PanGu.Dict.Wildcard(Setting.PanGuSettings.Config.MatchOptions,
+                Setting.PanGuSettings.Config.Parameters);
+
+            if (Setting.PanGuSettings.Config.MatchOptions.WildcardOutput)
+            {
+                _Wildcard.Load(dir);
+            }
 
             _DictLoader = new PanGu.Dict.DictionaryLoader(Setting.PanGuSettings.Config.GetDictionaryPath());
         }

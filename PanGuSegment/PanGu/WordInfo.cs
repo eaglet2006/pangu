@@ -13,6 +13,7 @@ namespace PanGu
         Numeric = 4,
         Symbol = 5,
         Space = 6,
+        Synonym = 7, //同义词
     }
 
 
