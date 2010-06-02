@@ -71,6 +71,7 @@
             this.checkBoxSynonymOutput = new System.Windows.Forms.CheckBox();
             this.checkBoxWildcard = new System.Windows.Forms.CheckBox();
             this.checkBoxWildcardSegment = new System.Windows.Forms.CheckBox();
+            this.checkBoxCustomRule = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownRedundancy)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownUnknownWordsThreshold)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownFilterEnglishLength)).BeginInit();
@@ -502,11 +503,22 @@
             this.checkBoxWildcardSegment.Text = "对通配符匹配出来的词再分词";
             this.checkBoxWildcardSegment.UseVisualStyleBackColor = true;
             // 
+            // checkBoxCustomRule
+            // 
+            this.checkBoxCustomRule.AutoSize = true;
+            this.checkBoxCustomRule.Location = new System.Drawing.Point(692, 644);
+            this.checkBoxCustomRule.Name = "checkBoxCustomRule";
+            this.checkBoxCustomRule.Size = new System.Drawing.Size(86, 17);
+            this.checkBoxCustomRule.TabIndex = 105;
+            this.checkBoxCustomRule.Text = "自定义规则";
+            this.checkBoxCustomRule.UseVisualStyleBackColor = true;
+            // 
             // FormDemo
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(954, 679);
+            this.Controls.Add(this.checkBoxCustomRule);
             this.Controls.Add(this.checkBoxWildcardSegment);
             this.Controls.Add(this.checkBoxWildcard);
             this.Controls.Add(this.checkBoxSynonymOutput);
@@ -606,6 +618,7 @@
         private System.Windows.Forms.CheckBox checkBoxSynonymOutput;
         private System.Windows.Forms.CheckBox checkBoxWildcard;
         private System.Windows.Forms.CheckBox checkBoxWildcardSegment;
+        private System.Windows.Forms.CheckBox checkBoxCustomRule;
 
     }
 }

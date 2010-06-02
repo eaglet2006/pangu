@@ -96,6 +96,11 @@ namespace PanGu.Match
         /// </summary>
         public bool WildcardSegment = false;
 
+        /// <summary>
+        /// 是否进行用户自定义规则匹配
+        /// </summary>
+        public bool CustomRule = false;
+
         public MatchOptions Clone()
         {
             MatchOptions result = new MatchOptions();

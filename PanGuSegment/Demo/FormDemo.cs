@@ -73,6 +73,7 @@ namespace Demo
             checkBoxSynonymOutput.Checked = options.SynonymOutput;
             checkBoxWildcard.Checked = options.WildcardOutput;
             checkBoxWildcardSegment.Checked = options.WildcardSegment;
+            checkBoxCustomRule.Checked = options.CustomRule;
 
             if (checkBoxMultiSelect.Checked)
             {
@@ -174,6 +175,7 @@ namespace Demo
             _Options.SynonymOutput = checkBoxSynonymOutput.Checked;
             _Options.WildcardOutput = checkBoxWildcard.Checked;
             _Options.WildcardSegment = checkBoxWildcardSegment.Checked;
+            _Options.CustomRule = checkBoxCustomRule.Checked;
 
             _Parameters.Redundancy = (int)numericUpDownRedundancy.Value;
             _Parameters.FilterEnglishLength = (int)numericUpDownFilterEnglishLength.Value;
@@ -183,8 +185,8 @@ namespace Demo
 
         private void buttonSegment_Click(object sender, EventArgs e)
         {
-            _Options = PanGu.Setting.PanGuSettings.Config.GetOptionsCopy();
-            _Parameters = PanGu.Setting.PanGuSettings.Config.GetParameterCopy();
+            _Options = PanGu.Setting.PanGuSettings.Config.MatchOptions.Clone();
+            _Parameters = PanGu.Setting.PanGuSettings.Config.Parameters.Clone();
 
             UpdateSettings();
 

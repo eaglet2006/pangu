@@ -115,6 +115,16 @@ namespace PanGu.Match
         /// </summary>
         public int FilterNumericLength = 0;
 
+        /// <summary>
+        /// 用户自定义规则的配件文件名
+        /// </summary>
+        public string CustomRuleAssemblyFileName = "";
+
+        /// <summary>
+        /// 用户自定义规则的类的完整名，即带名字空间的名称
+        /// </summary>
+        public string CustomRuleFullClassName = "";
+
         public MatchParameter Clone()
         {
             MatchParameter result = new MatchParameter();

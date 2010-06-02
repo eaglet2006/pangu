@@ -556,7 +556,7 @@ namespace PanGu
                     {
                         foreach (string word in synonyms)
                         {
-                            result.AddBefore(node, new WordInfo(word, node.Value.Position,
+                            node = result.AddAfter(node, new WordInfo(word, node.Value.Position,
                                 node.Value.Pos, node.Value.Frequency, _Parameters.SymbolRank,
                                 WordType.Synonym, node.Value.WordType));
                         }
@@ -617,8 +617,19 @@ namespace PanGu
                     }
 
                 }
+            }
 
-                
+            //用户自定义规则
+            if (_Options.CustomRule)
+            {
+                ICustomRule rule = CustomRule.GetCustomRule(_Parameters.CustomRuleAssemblyFileName, 
+                    _Parameters.CustomRuleFullClassName);
+
+                if (rule != null)
+                {
+                    rule.AfterSegment(result);
+                }
+
             }
         }
 

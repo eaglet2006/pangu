@@ -52,6 +52,7 @@
     <Compile Include="Dict\WordDictionary.cs" />
     <Compile Include="Framework\AppendList.cs" />
     <Compile Include="Framework\DFA.cs" />
+    <Compile Include="Framework\Instance.cs" />
     <Compile Include="Framework\Lexical.cs" />
     <Compile Include="Framework\Lock.cs" />
     <Compile Include="Framework\PorterStemmer.cs" />
@@ -62,6 +63,7 @@
     <Compile Include="Framework\Stream.cs" />
     <Compile Include="Framework\SuperLinkedList.cs" />
     <Compile Include="Framework\XmlSerialization.cs" />
+    <Compile Include="ICustomRule.cs" />
     <Compile Include="Match\ChsFullTextMatch.cs" />
     <Compile Include="Dict\ChsName.cs" />
     <Compile Include="Match\IChsFullTextMatch.cs" />
