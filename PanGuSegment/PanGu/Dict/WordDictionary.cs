@@ -116,6 +116,35 @@ namespace PanGu.Dict
         }
 
         #region Private Methods
+        private WordDictionaryFile LoadFromTextFile(String fileName)
+        {
+            WordDictionaryFile dictFile = new WordDictionaryFile();
+            dictFile.Dicts = new List<WordAttribute>();
+
+            using (StreamReader sr = new StreamReader(fileName, Encoding.UTF8))
+            {
+                while (!sr.EndOfStream)
+                {
+                    string line = sr.ReadLine();
+
+                    string[] strs = line.Split(new char[] { '|' });
+
+                    if (strs.Length == 3)
+                    {
+                        string word = strs[0].Trim();
+
+                        POS pos = (POS)int.Parse(strs[1].Substring(2, strs[1].Length - 2), System.Globalization.NumberStyles.HexNumber);
+                        double frequency = double.Parse(strs[2]);
+                        WordAttribute dict = new WordAttribute(word, pos, frequency);
+
+                        dictFile.Dicts.Add(dict);
+                    }
+                }
+            }
+
+            return dictFile;
+        }
+
         private WordDictionaryFile LoadFromBinFile(String fileName)
         {
             WordDictionaryFile dictFile = new WordDictionaryFile();
@@ -153,6 +182,32 @@ namespace PanGu.Dict
 
             return dictFile;
         }
+
+        private void SaveToTextFile(String fileName)
+        {
+            using (FileStream fs = new FileStream(fileName, FileMode.Create))
+            {
+                using (StreamWriter sw = new StreamWriter(fs, Encoding.UTF8))
+                {
+                    foreach (WordAttribute wa in _FirstCharDict.Values)
+                    {
+                        sw.WriteLine(string.Format("{0}|0x{1:x4}|{2}", wa.Word, (uint)wa.Pos, wa.Frequency));
+                    }
+
+                    foreach (WordAttribute wa in _DoubleCharDict.Values)
+                    {
+                        sw.WriteLine(string.Format("{0}|0x{1:x4}|{2}", wa.Word, (uint)wa.Pos, wa.Frequency));
+                    }
+
+                    foreach (WordAttribute wa in _WordDict.Values)
+                    {
+                        sw.WriteLine(string.Format("{0}|0x{1:x4}|{2}", wa.Word, (uint)wa.Pos, wa.Frequency));
+                    }
+                }
+            }
+        }
+
+
 
         private void SaveToBinFile(String fileName)
         {
@@ -355,15 +410,29 @@ namespace PanGu.Dict
             return result;
         }
 
-
         public void Load(String fileName)
+        {
+            Load(fileName, false);
+        }
+
+        public void Load(String fileName, bool textFile)
         {
             _WordDict = new Dictionary<string, WordAttribute>();
             _FirstCharDict = new Dictionary<char, WordAttribute>();
             _DoubleCharDict = new Dictionary<uint, WordAttribute>();
             _TripleCharDict = new Dictionary<long, byte[]>();
 
-            foreach (WordAttribute wa in LoadFromBinFile(fileName).Dicts)
+            List<WordAttribute> waList = null;
+            if (textFile)
+            {
+                waList = LoadFromTextFile(fileName).Dicts;
+            }
+            else
+            {
+                waList = LoadFromBinFile(fileName).Dicts;
+            }
+
+            foreach (WordAttribute wa in waList)
             {
                 string key = wa.Word.ToLower();
 
@@ -435,13 +504,16 @@ namespace PanGu.Dict
 
                 }
             }
-
-
         }
 
         public void Save(string fileName)
         {
             SaveToBinFile(fileName);
+        }
+
+        public void SaveToText(string fileName)
+        {
+            SaveToTextFile(fileName);
         }
 
         public void InsertWord(String word, double frequency, POS pos)

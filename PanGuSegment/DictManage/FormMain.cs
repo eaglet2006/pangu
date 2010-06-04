@@ -352,5 +352,52 @@ namespace DictManage
         {
             buttonSearch_Click(sender, e);
         }
+
+        private void OpenAsTextToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            openFileDialogDict.RestoreDirectory = true;
+            openFileDialogDict.FileName = "Dict.txt";
+            openFileDialogDict.Filter = "Dictionay file|*.txt";
+
+            if (openFileDialogDict.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    DateTime old = DateTime.Now;
+                    _WordDict = new WordDictionary();
+                    _WordDict.Load(openFileDialogDict.FileName, true);
+
+                    TimeSpan s = DateTime.Now - old;
+                    statusStrip.Items[0].Text = s.TotalMilliseconds.ToString() + "ms";
+                }
+                catch (Exception e1)
+                {
+                    MessageBox.Show(String.Format("Can not open dictionary, errmsg:{0}", e1.Message));
+                    return;
+                }
+
+                panelMain.Enabled = true;
+                m_DictFileName = openFileDialogDict.FileName;
+                this.Text = openFileDialogDict.FileName;
+                ShowCount();
+            }
+        }
+
+        private void SaveAsTextToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (_WordDict == null)
+            {
+                return;
+            }
+
+            saveFileDialogDict.RestoreDirectory = true;
+            saveFileDialogDict.FileName = "Dict.txt";
+            saveFileDialogDict.Filter = "Dictionay file|*.txt";
+
+            if (saveFileDialogDict.ShowDialog() == DialogResult.OK)
+            {
+                _WordDict.SaveToText(saveFileDialogDict.FileName);
+            }
+        }
     }
 }

@@ -60,6 +60,8 @@
             this.label = new System.Windows.Forms.ToolStripStatusLabel();
             this.openFileDialogName = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialogText = new System.Windows.Forms.SaveFileDialog();
+            this.OpenAsTextToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.SaveAsTextToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.posCtrl = new PosDisplayCtrl.PosCtrl();
             this.menuStrip.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -84,7 +86,9 @@
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openBinDictFile13ToolStripMenuItem,
-            this.saveBinDictFile13ToolStripMenuItem});
+            this.saveBinDictFile13ToolStripMenuItem,
+            this.OpenAsTextToolStripMenuItem,
+            this.SaveAsTextToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(57, 20);
             this.fileToolStripMenuItem.Text = "文件(&F)";
@@ -92,14 +96,14 @@
             // openBinDictFile13ToolStripMenuItem
             // 
             this.openBinDictFile13ToolStripMenuItem.Name = "openBinDictFile13ToolStripMenuItem";
-            this.openBinDictFile13ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.openBinDictFile13ToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
             this.openBinDictFile13ToolStripMenuItem.Text = "打开(&O)";
             this.openBinDictFile13ToolStripMenuItem.Click += new System.EventHandler(this.openBinDictFile13ToolStripMenuItem_Click);
             // 
             // saveBinDictFile13ToolStripMenuItem
             // 
             this.saveBinDictFile13ToolStripMenuItem.Name = "saveBinDictFile13ToolStripMenuItem";
-            this.saveBinDictFile13ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.saveBinDictFile13ToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
             this.saveBinDictFile13ToolStripMenuItem.Text = "保存(&S)";
             this.saveBinDictFile13ToolStripMenuItem.Click += new System.EventHandler(this.saveBinDictFile13ToolStripMenuItem_Click);
             // 
@@ -114,7 +118,7 @@
             // findToolStripMenuItem
             // 
             this.findToolStripMenuItem.Name = "findToolStripMenuItem";
-            this.findToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.findToolStripMenuItem.Size = new System.Drawing.Size(98, 22);
             this.findToolStripMenuItem.Text = "查找";
             this.findToolStripMenuItem.Click += new System.EventHandler(this.findToolStripMenuItem_Click);
             // 
@@ -326,6 +330,20 @@
             this.saveFileDialogText.DefaultExt = "txt";
             this.saveFileDialogText.Filter = "Txt|*.txt";
             // 
+            // OpenAsTextToolStripMenuItem
+            // 
+            this.OpenAsTextToolStripMenuItem.Name = "OpenAsTextToolStripMenuItem";
+            this.OpenAsTextToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+            this.OpenAsTextToolStripMenuItem.Text = "以文本文件方式打开";
+            this.OpenAsTextToolStripMenuItem.Click += new System.EventHandler(this.OpenAsTextToolStripMenuItem_Click);
+            // 
+            // SaveAsTextToolStripMenuItem
+            // 
+            this.SaveAsTextToolStripMenuItem.Name = "SaveAsTextToolStripMenuItem";
+            this.SaveAsTextToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+            this.SaveAsTextToolStripMenuItem.Text = "保存为文本文件";
+            this.SaveAsTextToolStripMenuItem.Click += new System.EventHandler(this.SaveAsTextToolStripMenuItem_Click);
+            // 
             // posCtrl
             // 
             this.posCtrl.Location = new System.Drawing.Point(286, 137);
@@ -394,6 +412,8 @@
         private System.Windows.Forms.ContextMenuStrip contextMenuStripList;
         private System.Windows.Forms.ToolStripMenuItem exportToolStripMenuItem;
         private System.Windows.Forms.SaveFileDialog saveFileDialogText;
+        private System.Windows.Forms.ToolStripMenuItem OpenAsTextToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem SaveAsTextToolStripMenuItem;
 
     }
 }
