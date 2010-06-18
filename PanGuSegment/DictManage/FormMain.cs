@@ -32,6 +32,7 @@ namespace DictManage
     {
         WordDictionary _WordDict = null;
         String m_DictFileName;
+        string _Version = "";
 
         private int Count
         {
@@ -70,7 +71,7 @@ namespace DictManage
                 {
                     DateTime old = DateTime.Now;
                     _WordDict = new WordDictionary();
-                    _WordDict.Load(openFileDialogDict.FileName);
+                    _WordDict.Load(openFileDialogDict.FileName, out _Version);
 
                     TimeSpan s = DateTime.Now - old;
                     statusStrip.Items[0].Text = s.TotalMilliseconds.ToString() + "ms";
@@ -83,7 +84,7 @@ namespace DictManage
 
                 panelMain.Enabled = true;
                 m_DictFileName = openFileDialogDict.FileName;
-                this.Text = openFileDialogDict.FileName;
+                this.Text = "V" + _Version + " " + openFileDialogDict.FileName;
                 ShowCount();
             }
 
@@ -102,7 +103,13 @@ namespace DictManage
 
             if (saveFileDialogDict.ShowDialog() == DialogResult.OK)
             {
-                _WordDict.Save(saveFileDialogDict.FileName);
+                FormInputDictVersion frmInputDictVersion = new FormInputDictVersion();
+                frmInputDictVersion.Version = _Version;
+                if (frmInputDictVersion.ShowDialog() == DialogResult.OK)
+                {
+                    _WordDict.Save(saveFileDialogDict.FileName, 
+                        frmInputDictVersion.Version);
+                }
             }
 
         }
@@ -361,11 +368,14 @@ namespace DictManage
 
             if (openFileDialogDict.ShowDialog() == DialogResult.OK)
             {
+                _Version = "";
+
                 try
                 {
                     DateTime old = DateTime.Now;
                     _WordDict = new WordDictionary();
-                    _WordDict.Load(openFileDialogDict.FileName, true);
+
+                    _WordDict.Load(openFileDialogDict.FileName, true, out _Version);
 
                     TimeSpan s = DateTime.Now - old;
                     statusStrip.Items[0].Text = s.TotalMilliseconds.ToString() + "ms";
@@ -378,7 +388,7 @@ namespace DictManage
 
                 panelMain.Enabled = true;
                 m_DictFileName = openFileDialogDict.FileName;
-                this.Text = openFileDialogDict.FileName;
+                this.Text = "V" + _Version + " " + openFileDialogDict.FileName;
                 ShowCount();
             }
         }

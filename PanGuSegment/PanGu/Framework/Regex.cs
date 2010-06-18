@@ -218,9 +218,12 @@ namespace PanGu.Framework
             {
                 String endText = regx.Substring(begin);
 
-                if (GetMatch(text, endText, ignoreCase) == "")
+                if (endText != "")
                 {
-                    return "";
+                    if (GetMatch(text, endText, ignoreCase) == "")
+                    {
+                        return "";
+                    }
                 }
             }
 

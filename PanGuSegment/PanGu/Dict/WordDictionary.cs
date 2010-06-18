@@ -85,6 +85,11 @@ namespace PanGu.Dict
             this.WordAttr = wordAttr;
             this.Level = 0;
         }
+
+        public override string ToString()
+        {
+            return string.Format("{0},{1}", WordAttr.Word, Position);
+        }
     }
 
     /// <summary>
@@ -99,6 +104,7 @@ namespace PanGu.Dict
         Dictionary<long, byte[]> _TripleCharDict = new Dictionary<long, byte[]>();
 
         internal Dict.ChsName ChineseName = null;
+        private string _Version = "00";
 
         public int Count
         {
@@ -145,7 +151,7 @@ namespace PanGu.Dict
             return dictFile;
         }
 
-        private WordDictionaryFile LoadFromBinFile(String fileName)
+        private WordDictionaryFile LoadFromBinFile(String fileName, out string verNumStr)
         {
             WordDictionaryFile dictFile = new WordDictionaryFile();
             dictFile.Dicts = new List<WordAttribute>();
@@ -154,9 +160,16 @@ namespace PanGu.Dict
 
             byte[] version = new byte[32];
             fs.Read(version, 0, version.Length);
+
             String ver = Encoding.UTF8.GetString(version, 0, version.Length);
 
-            String verNumStr = Framework.Regex.GetMatch(ver, "Pan Gu Segment V(.+)", true);
+            int zeroPosition = ver.IndexOf('\0');
+            if (zeroPosition >= 0)
+            {
+                ver = ver.Substring(0, zeroPosition);
+            }
+
+            verNumStr = Framework.Regex.GetMatch(ver, "Pan Gu Segment V(.+)", true);
 
             while (fs.Position < fs.Length)
             {
@@ -209,14 +222,19 @@ namespace PanGu.Dict
 
 
 
-        private void SaveToBinFile(String fileName)
+        private void SaveToBinFile(String fileName, string verStr)
         {
+            if (verStr.Length > 8)
+            {
+                verStr = verStr.Substring(0, 8);
+            }
+
             using (FileStream fs = new FileStream(fileName, FileMode.Create))
             {
                 byte[] version = new byte[32];
 
                 int i = 0;
-                foreach (byte v in System.Text.Encoding.UTF8.GetBytes("Pan Gu Segment V1.0"))
+                foreach (byte v in System.Text.Encoding.UTF8.GetBytes("Pan Gu Segment V" + verStr))
                 {
                     version[i] = v;
                     i++;
@@ -412,11 +430,25 @@ namespace PanGu.Dict
 
         public void Load(String fileName)
         {
-            Load(fileName, false);
+            Load(fileName, false, out _Version);
         }
 
-        public void Load(String fileName, bool textFile)
+        public void Load(String fileName, out string version)
         {
+            Load(fileName, false, out version);
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <param name="textFile"></param>
+        /// <param name="version">输出字典的版本号</param>
+        public void Load(String fileName, bool textFile, out string version)
+        {
+            version = "";
+
             _WordDict = new Dictionary<string, WordAttribute>();
             _FirstCharDict = new Dictionary<char, WordAttribute>();
             _DoubleCharDict = new Dictionary<uint, WordAttribute>();
@@ -429,7 +461,7 @@ namespace PanGu.Dict
             }
             else
             {
-                waList = LoadFromBinFile(fileName).Dicts;
+                waList = LoadFromBinFile(fileName, out version).Dicts;
             }
 
             foreach (WordAttribute wa in waList)
@@ -508,8 +540,14 @@ namespace PanGu.Dict
 
         public void Save(string fileName)
         {
-            SaveToBinFile(fileName);
+            SaveToBinFile(fileName, _Version);
         }
+
+        public void Save(string fileName, string version)
+        {
+            SaveToBinFile(fileName, version);
+        }
+
 
         public void SaveToText(string fileName)
         {
@@ -617,12 +655,46 @@ namespace PanGu.Dict
 
         public void UpdateWord(String word, double frequency, POS pos)
         {
+            string key = word.ToLower();
+
+            if (key.Length == 1)
+            {
+                if (_FirstCharDict.ContainsKey(key[0]))
+                {
+                    _FirstCharDict[key[0]].Word = word;
+                    _FirstCharDict[key[0]].Frequency = frequency;
+                    _FirstCharDict[key[0]].Pos = pos;
+
+                    return;
+                }
+                else
+                {
+                    return;
+                }
+            }
+
+            if (key.Length == 2)
+            {
+                uint doubleChar = ((uint)key[0] * 65536) + key[1];
+                if (_DoubleCharDict.ContainsKey(doubleChar))
+                {
+                    _DoubleCharDict[doubleChar].Word = word;
+                    _DoubleCharDict[doubleChar].Frequency = frequency;
+                    _DoubleCharDict[doubleChar].Pos = pos;
+
+                    return;
+                }
+                else
+                {
+                    return;
+                }
+            }
+
             if (_WordDict == null)
             {
                 return;
             }
 
-            string key = word.ToLower();
             if (!_WordDict.ContainsKey(key))
             {
                 return;
@@ -635,12 +707,40 @@ namespace PanGu.Dict
 
         public void DeleteWord(String word)
         {
+            string key = word.ToLower();
+
+            if (key.Length == 1)
+            {
+                if (_FirstCharDict.ContainsKey(key[0]))
+                {
+                    _FirstCharDict.Remove(key[0]);
+                    return;
+                }
+                else
+                {
+                    return;
+                }
+            }
+
+            if (key.Length == 2)
+            {
+                uint doubleChar = ((uint)key[0] * 65536) + key[1];
+                if (_DoubleCharDict.ContainsKey(doubleChar))
+                {
+                    _DoubleCharDict.Remove(doubleChar);
+                    return;
+                }
+                else
+                {
+                    return;
+                }
+            }
+
             if (_WordDict == null)
             {
                 return;
             }
 
-            string key = word.ToLower();
             if (_WordDict.ContainsKey(key))
             {
                 _WordDict.Remove(key);

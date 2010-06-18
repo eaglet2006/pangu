@@ -95,6 +95,16 @@ namespace PanGu.Match
                 AboveCount = 0;
             }
 
+            public Node(Node node)
+            {
+                this.AboveCount = node.AboveCount;
+                this.SpaceCount = node.SpaceCount;
+                this.FreqSum = node.FreqSum;
+                this.SingleWordCount = node.SingleWordCount;
+                this.PositionLength = node.PositionLength;
+                this.Parent = null;
+            }
+
             public Node(Dict.PositionLength pl, Node parent, int aboveCount, 
                 int spaceCount, int singleWordCount, double freqSum)
             {
@@ -165,7 +175,6 @@ namespace PanGu.Match
         Node _Root = new Node();
 
         Framework.AppendList<Node> _LeafNodeList = new PanGu.Framework.AppendList<Node>();
-        //int _MaxSpaceCount = 0;
         Dict.PositionLength[] _PositionLengthArr;
         int _InputStringLength;
         int _PositionLengthArrCount;
@@ -202,11 +211,6 @@ namespace PanGu.Match
 
             int spaceCount = parent.SpaceCount + _PositionLengthArr[curIndex].Position - (parent.PositionLength.Position + parent.PositionLength.Length);
 
-            //if (spaceCount > _MaxSpaceCount)
-            //{
-            //    return;
-            //}
-
             int singleWordCount = parent.SingleWordCount + (_PositionLengthArr[curIndex].Length == 1 ? 1 : 0);
             double freqSum = 0;
 
@@ -236,11 +240,6 @@ namespace PanGu.Match
             {
                 curNode.SpaceCount += _InputStringLength - curNode.PositionLength.Position - curNode.PositionLength.Length;
                 _LeafNodeList.Add(curNode);
-
-                //if (_MaxSpaceCount > curNode.SpaceCount)
-                //{
-                //    _MaxSpaceCount = curNode.SpaceCount;
-                //}
             }
 
         }
@@ -282,11 +281,6 @@ namespace PanGu.Match
 
                 int spaceCount = parent.SpaceCount + _PositionLengthArr[curIndex].Position - (parent.PositionLength.Position + parent.PositionLength.Length);
 
-                //if (spaceCount > _MaxSpaceCount)
-                //{
-                //    continue;
-                //}
-
                 int singleWordCount = parent.SingleWordCount + (_PositionLengthArr[curIndex].Length == 1 ? 1 : 0);
                 double freqSum = 0;
 
@@ -325,11 +319,6 @@ namespace PanGu.Match
                 {
                     curNode.SpaceCount += _InputStringLength - curNode.PositionLength.Position - curNode.PositionLength.Length;
                     _LeafNodeList.Add(curNode);
-
-                    //if (_MaxSpaceCount > curNode.SpaceCount)
-                    //{
-                    //    _MaxSpaceCount = curNode.SpaceCount;
-                    //}
                 }
             }
         }
@@ -614,6 +603,204 @@ namespace PanGu.Match
             _WordDict = wordDict;
         }
 
+        private void CombineNodeArr(Node[] result, Node[] arr)
+        {
+            if (arr.Length < result.Length)
+            {
+                Node[] newArr = new Node[result.Length];
+                Array.Copy(arr, newArr, arr.Length);
+            }
+
+
+            //复制 arr 链表
+            for (int i = 0; i < arr.Length; i++)
+            {
+                if (i == 0)
+                {
+                    if (arr[i] == null)
+                    {
+                        return;
+                    }
+
+                    continue;
+                }
+
+                if (i >= result.Length)
+                {
+                    break;
+                }
+
+                if (arr[i] == null)
+                {
+                    arr[i] = arr[i - 1];
+                }
+
+                Node fst = new Node(arr[i]);
+                Node node = fst;
+                Node n = arr[i];
+
+                n = n.Parent;
+                for (int j = 1; j < arr[i].AboveCount; j++)
+                {
+                    node.Parent = new Node(n);
+                    node = node.Parent;
+                    n = n.Parent;
+                }
+
+                arr[i] = fst;
+            }
+
+
+            //如果result 的有效值数量少于 arr,将result 的有效值填充到和arr相等
+            //如果result 没有一个有效值，则不做处理
+            for (int i = 0; i < result.Length; i++)
+            {
+                if (i >= arr.Length)
+                {
+                    break;
+                }
+
+                if (result[i] == null && arr[i] != null)
+                {
+                    if (i > 0)
+                    {
+                        result[i] = result[i - 1];
+                    }
+                }
+            }
+
+            for (int i = 0; i < result.Length; i++)
+            {
+                int j = i;
+                if (arr.Length <= i)
+                {
+                    j = arr.Length - 1;
+                }
+
+                if (arr[j] == null)
+                {
+                    if (result[i] == null)
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        while (arr[j] == null)
+                        {
+                            j--;
+                        }
+                    }
+                }
+
+                if (result[i] == null)
+                {
+                    //只有在result 没有一个有效值时才会到这个分支
+                    result[i] = arr[j];
+                }
+                else
+                {
+                    Node n = arr[j];
+                    for (int k = 0; k < arr[j].AboveCount - 1; k++)
+                    {
+                        n = n.Parent;
+                    }
+
+                    n.Parent = result[i];
+                    int aboveCount = arr[j].AboveCount + result[i].AboveCount;
+                    result[i] = arr[j];
+                    result[i].AboveCount = aboveCount;
+                }
+            }
+
+
+        }
+
+        /// <summary>
+        ///根据孤立点拆分长句，然后再分别对各个句子的片段进行分词.
+        ///长中文句子的分词困扰了我3年，一直没有好的解决方案。没想到在观看
+        ///2010年世界杯开幕式时，我突发灵感，想出了这个孤立点分割拆分长句的
+        ///算法，彻底解决的这个长期困扰我的难题. 
+        ///eaglet 11th Jun 2010 注释留念
+        /// </summary>
+        /// <param name="positionLenArr">保护位置和长度信息的单词分量数组</param>
+        /// <param name="orginalTextLength">原始字符串长度</param>
+        /// <param name="count">positionLenArr 的 count</param>
+        /// <returns></returns>
+        private Node[] GetLeafNodeArray(PanGu.Dict.PositionLength[] positionLenArr, int orginalTextLength, int count)
+        {
+            //Split by isolated point
+
+            Node[] result = new Node[TopRecord];
+
+            int lastRightBoundary = positionLenArr[0].Position + positionLenArr[0].Length;
+            int lastIndex = 0;
+
+            for (int i = 1; i < count; i++)
+            {
+                if (positionLenArr[i].Position >= lastRightBoundary)
+                {
+                    //last is isolated point
+                    int c = i - lastIndex;
+                    PanGu.Dict.PositionLength[] arr = new PanGu.Dict.PositionLength[c];
+                    Array.Copy(positionLenArr, lastIndex, arr, 0, c);
+                    Node[] leafNodeArray = GetLeafNodeArrayCore(arr, lastRightBoundary - positionLenArr[lastIndex].Position, c);
+                    Framework.QuickSort<Node>.TopSort(leafNodeArray, _LeafNodeList.Count, (int)Math.Min(TopRecord, _LeafNodeList.Count), new NodeComparer());
+                    CombineNodeArr(result, leafNodeArray);
+
+                    lastIndex = i;
+                }
+
+                int newRightBoundary = positionLenArr[i].Position + positionLenArr[i].Length;
+
+                if (newRightBoundary > lastRightBoundary)
+                {
+                    lastRightBoundary = newRightBoundary;
+                }
+
+            }
+
+            if (lastIndex < count)
+            {
+                //last is isolated point
+                int c = count - lastIndex;
+
+                PanGu.Dict.PositionLength[] arr = new PanGu.Dict.PositionLength[c];
+                Array.Copy(positionLenArr, lastIndex, arr, 0, c);
+                Node[] leafNodeArray = GetLeafNodeArrayCore(arr, lastRightBoundary - positionLenArr[lastIndex].Position, c);
+                Framework.QuickSort<Node>.TopSort(leafNodeArray, _LeafNodeList.Count, (int)Math.Min(TopRecord, _LeafNodeList.Count), new NodeComparer());
+                CombineNodeArr(result, leafNodeArray);
+            }
+
+
+            return result;
+
+        }
+
+        /// <summary>
+        /// 最底层算法，获取叶子节点集合
+        /// </summary>
+        /// <param name="positionLenArr"></param>
+        /// <param name="orginalText"></param>
+        /// <param name="count"></param>
+        /// <returns></returns>
+        private Node[] GetLeafNodeArrayCore(PanGu.Dict.PositionLength[] positionLenArr, int orginalTextLength, int count)
+        {
+            _LeafNodeList.Clear();
+            _PositionLengthArr = positionLenArr;
+            _InputStringLength = orginalTextLength;
+            _PositionLengthArrCount = count;
+
+            BuildTree(_Root, 0);
+
+            for (int i = _LeafNodeList.Count; i < _LeafNodeList.Items.Length; i++)
+            {
+                _LeafNodeList.Items[i] = null;
+            }
+
+            return _LeafNodeList.Items;
+
+        }
+
         public SuperLinkedList<WordInfo> Match(PanGu.Dict.PositionLength[] positionLenArr, string orginalText, int count)
         {
             if (_Options == null)
@@ -660,18 +847,12 @@ namespace PanGu.Match
                 }
             }
 
-            //_MaxSpaceCount = 8;
+            Node[] leafNodeArray = GetLeafNodeArray(positionLenArr, orginalText.Length, count);
 
-            _PositionLengthArr = positionLenArr;
-            _InputStringLength = orginalText.Length;
-            _PositionLengthArrCount = count;
-
-            BuildTree(_Root, 0);
-
-            Node[] leafNodeArray = _LeafNodeList.Items;
-
-            Framework.QuickSort<Node>.TopSort(leafNodeArray,
-                _LeafNodeList.Count, (int)Math.Min(TopRecord, _LeafNodeList.Count), new NodeComparer());
+            //下面两句是不采用孤立点分割算法的老算法
+            //Node[] leafNodeArray = GetLeafNodeArrayCore(positionLenArr, orginalText.Length, count);
+            //Framework.QuickSort<Node>.TopSort(leafNodeArray,
+            //    _LeafNodeList.Count, (int)Math.Min(TopRecord, _LeafNodeList.Count), new NodeComparer());
 
             int j = 0;
             // 获取前TopRecord个单词序列
