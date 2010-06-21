@@ -858,7 +858,12 @@ namespace PanGu.Match
             // 获取前TopRecord个单词序列
             foreach (Node node in leafNodeArray)
             {
-                if (j >= TopRecord || j >= _LeafNodeList.Count)
+                if (leafNodeArray[j] == null)
+                {
+                    break;
+                }
+
+                if (j >= TopRecord || j >= leafNodeArray.Length)
                 {
                     break;
                 }
