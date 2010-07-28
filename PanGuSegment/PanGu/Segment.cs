@@ -425,7 +425,7 @@ namespace PanGu
                             }
                         }
 
-                        if (_Options.MultiDimensionality)
+                        if (_Options.EnglishMultiDimensionality)
                         {
                             if (Framework.Regex.GetMatchStrings(cur.Value.Word, PATTERNS, true, out output))
                             {

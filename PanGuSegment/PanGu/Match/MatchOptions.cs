@@ -25,6 +25,12 @@ namespace PanGu.Match
         public bool MultiDimensionality = true;
 
         /// <summary>
+        /// 英文多元分词，这个开关，会将英文中的字母和数字分开。目前版本这里没有优化，
+        /// 打开这个开关，会极大的影响分词效率，慎用！
+        /// </summary>
+        public bool EnglishMultiDimensionality = false;
+
+        /// <summary>
         /// 过滤停用词
         /// </summary>
         public bool FilterStopWords = true;
