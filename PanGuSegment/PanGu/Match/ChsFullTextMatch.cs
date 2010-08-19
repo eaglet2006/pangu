@@ -25,6 +25,13 @@ namespace PanGu.Match
     {
         class NodeComparer : IComparer<Node>
         {
+            bool _FreqFirst;
+
+            internal NodeComparer(bool frequencyFirst)
+            {
+                _FreqFirst = frequencyFirst;
+            }
+
             #region IComparer<Node> Members
 
             public int Compare(Node x, Node y)
@@ -49,15 +56,7 @@ namespace PanGu.Match
                     }
                     else
                     {
-                        if (x.SingleWordCount < y.SingleWordCount)
-                        {
-                            return -1;
-                        }
-                        else if (x.SingleWordCount > y.SingleWordCount)
-                        {
-                            return 1;
-                        }
-                        else
+                        if (_FreqFirst)
                         {
                             if (x.FreqSum > y.FreqSum)
                             {
@@ -69,7 +68,44 @@ namespace PanGu.Match
                             }
                             else
                             {
-                                return 0;
+                                if (x.SingleWordCount < y.SingleWordCount)
+                                {
+                                    return -1;
+                                }
+                                else if (x.SingleWordCount > y.SingleWordCount)
+                                {
+                                    return 1;
+                                }
+                                else
+                                {
+                                    return 0;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (x.SingleWordCount < y.SingleWordCount)
+                            {
+                                return -1;
+                            }
+                            else if (x.SingleWordCount > y.SingleWordCount)
+                            {
+                                return 1;
+                            }
+                            else
+                            {
+                                if (x.FreqSum > y.FreqSum)
+                                {
+                                    return -1;
+                                }
+                                else if (x.FreqSum < y.FreqSum)
+                                {
+                                    return 1;
+                                }
+                                else
+                                {
+                                    return 0;
+                                }
                             }
                         }
                     }
@@ -744,7 +780,7 @@ namespace PanGu.Match
                     PanGu.Dict.PositionLength[] arr = new PanGu.Dict.PositionLength[c];
                     Array.Copy(positionLenArr, lastIndex, arr, 0, c);
                     Node[] leafNodeArray = GetLeafNodeArrayCore(arr, lastRightBoundary - positionLenArr[lastIndex].Position, c);
-                    Framework.QuickSort<Node>.TopSort(leafNodeArray, _LeafNodeList.Count, (int)Math.Min(TopRecord, _LeafNodeList.Count), new NodeComparer());
+                    Framework.QuickSort<Node>.TopSort(leafNodeArray, _LeafNodeList.Count, (int)Math.Min(TopRecord, _LeafNodeList.Count), new NodeComparer(_Options.FrequencyFirst));
                     CombineNodeArr(result, leafNodeArray);
 
                     lastIndex = i;
@@ -767,7 +803,7 @@ namespace PanGu.Match
                 PanGu.Dict.PositionLength[] arr = new PanGu.Dict.PositionLength[c];
                 Array.Copy(positionLenArr, lastIndex, arr, 0, c);
                 Node[] leafNodeArray = GetLeafNodeArrayCore(arr, lastRightBoundary - positionLenArr[lastIndex].Position, c);
-                Framework.QuickSort<Node>.TopSort(leafNodeArray, _LeafNodeList.Count, (int)Math.Min(TopRecord, _LeafNodeList.Count), new NodeComparer());
+                Framework.QuickSort<Node>.TopSort(leafNodeArray, _LeafNodeList.Count, (int)Math.Min(TopRecord, _LeafNodeList.Count), new NodeComparer(_Options.FrequencyFirst));
                 CombineNodeArr(result, leafNodeArray);
             }
 
