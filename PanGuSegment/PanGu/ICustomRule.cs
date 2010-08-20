@@ -10,6 +10,7 @@ namespace PanGu
     /// </summary>
     public interface ICustomRule
     {
+        string Text {get; set;}
         void AfterSegment(SuperLinkedList<WordInfo> result);
     }
 

@@ -72,6 +72,7 @@
             this.checkBoxWildcard = new System.Windows.Forms.CheckBox();
             this.checkBoxWildcardSegment = new System.Windows.Forms.CheckBox();
             this.checkBoxCustomRule = new System.Windows.Forms.CheckBox();
+            this.checkBoxEnglishMultiSelect = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownRedundancy)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownUnknownWordsThreshold)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownFilterEnglishLength)).BeginInit();
@@ -466,7 +467,7 @@
             // checkBoxEnglishSegment
             // 
             this.checkBoxEnglishSegment.AutoSize = true;
-            this.checkBoxEnglishSegment.Location = new System.Drawing.Point(191, 645);
+            this.checkBoxEnglishSegment.Location = new System.Drawing.Point(297, 645);
             this.checkBoxEnglishSegment.Name = "checkBoxEnglishSegment";
             this.checkBoxEnglishSegment.Size = new System.Drawing.Size(74, 17);
             this.checkBoxEnglishSegment.TabIndex = 101;
@@ -476,7 +477,7 @@
             // checkBoxSynonymOutput
             // 
             this.checkBoxSynonymOutput.AutoSize = true;
-            this.checkBoxSynonymOutput.Location = new System.Drawing.Point(297, 645);
+            this.checkBoxSynonymOutput.Location = new System.Drawing.Point(191, 668);
             this.checkBoxSynonymOutput.Name = "checkBoxSynonymOutput";
             this.checkBoxSynonymOutput.Size = new System.Drawing.Size(86, 17);
             this.checkBoxSynonymOutput.TabIndex = 102;
@@ -486,7 +487,7 @@
             // checkBoxWildcard
             // 
             this.checkBoxWildcard.AutoSize = true;
-            this.checkBoxWildcard.Location = new System.Drawing.Point(389, 645);
+            this.checkBoxWildcard.Location = new System.Drawing.Point(283, 668);
             this.checkBoxWildcard.Name = "checkBoxWildcard";
             this.checkBoxWildcard.Size = new System.Drawing.Size(86, 17);
             this.checkBoxWildcard.TabIndex = 103;
@@ -496,7 +497,7 @@
             // checkBoxWildcardSegment
             // 
             this.checkBoxWildcardSegment.AutoSize = true;
-            this.checkBoxWildcardSegment.Location = new System.Drawing.Point(494, 645);
+            this.checkBoxWildcardSegment.Location = new System.Drawing.Point(388, 668);
             this.checkBoxWildcardSegment.Name = "checkBoxWildcardSegment";
             this.checkBoxWildcardSegment.Size = new System.Drawing.Size(182, 17);
             this.checkBoxWildcardSegment.TabIndex = 104;
@@ -506,18 +507,29 @@
             // checkBoxCustomRule
             // 
             this.checkBoxCustomRule.AutoSize = true;
-            this.checkBoxCustomRule.Location = new System.Drawing.Point(692, 644);
+            this.checkBoxCustomRule.Location = new System.Drawing.Point(586, 667);
             this.checkBoxCustomRule.Name = "checkBoxCustomRule";
             this.checkBoxCustomRule.Size = new System.Drawing.Size(86, 17);
             this.checkBoxCustomRule.TabIndex = 105;
             this.checkBoxCustomRule.Text = "自定义规则";
             this.checkBoxCustomRule.UseVisualStyleBackColor = true;
             // 
+            // checkBoxEnglishMultiSelect
+            // 
+            this.checkBoxEnglishMultiSelect.AutoSize = true;
+            this.checkBoxEnglishMultiSelect.Location = new System.Drawing.Point(191, 645);
+            this.checkBoxEnglishMultiSelect.Name = "checkBoxEnglishMultiSelect";
+            this.checkBoxEnglishMultiSelect.Size = new System.Drawing.Size(98, 17);
+            this.checkBoxEnglishMultiSelect.TabIndex = 106;
+            this.checkBoxEnglishMultiSelect.Text = "英文多元分词";
+            this.checkBoxEnglishMultiSelect.UseVisualStyleBackColor = true;
+            // 
             // FormDemo
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(954, 679);
+            this.ClientSize = new System.Drawing.Size(954, 691);
+            this.Controls.Add(this.checkBoxEnglishMultiSelect);
             this.Controls.Add(this.checkBoxCustomRule);
             this.Controls.Add(this.checkBoxWildcardSegment);
             this.Controls.Add(this.checkBoxWildcard);
@@ -619,6 +631,7 @@
         private System.Windows.Forms.CheckBox checkBoxWildcard;
         private System.Windows.Forms.CheckBox checkBoxWildcardSegment;
         private System.Windows.Forms.CheckBox checkBoxCustomRule;
+        private System.Windows.Forms.CheckBox checkBoxEnglishMultiSelect;
 
     }
 }

@@ -427,56 +427,70 @@ namespace PanGu
 
                         if (_Options.EnglishMultiDimensionality)
                         {
-                            if (Framework.Regex.GetMatchStrings(cur.Value.Word, PATTERNS, true, out output))
+                            bool needSplit = false;
+
+                            foreach (char c in cur.Value.Word)
                             {
-                                int outputCount = 0;
-
-                                foreach (string str in output)
+                                if ((c >= '0' && c <= '9') || (c == '_'))
                                 {
-                                    if (!string.IsNullOrEmpty(str))
-                                    {
-                                        outputCount++;
+                                    needSplit = true;
+                                    break;
+                                }
+                            }
 
-                                        if (outputCount > 1)
+                            if (needSplit)
+                            {
+                                if (Framework.Regex.GetMatchStrings(cur.Value.Word, PATTERNS, true, out output))
+                                {
+                                    int outputCount = 0;
+
+                                    foreach (string str in output)
+                                    {
+                                        if (!string.IsNullOrEmpty(str))
                                         {
-                                            break;
+                                            outputCount++;
+
+                                            if (outputCount > 1)
+                                            {
+                                                break;
+                                            }
                                         }
                                     }
-                                }
 
 
-                                if (outputCount > 1)
-                                {
-                                    int position = cur.Value.Position;
-
-                                    foreach (string splitWord in output)
+                                    if (outputCount > 1)
                                     {
-                                        if (string.IsNullOrEmpty(splitWord))
-                                        {
-                                            continue;
-                                        }
+                                        int position = cur.Value.Position;
 
-                                        WordInfo wi;
-
-                                        if (splitWord[0] >= '0' && splitWord[0] <= '9')
+                                        foreach (string splitWord in output)
                                         {
-                                            wi = new WordInfo(splitWord, POS.POS_A_M, 1);
-                                            wi.Position = position;
-                                            wi.Rank = _Parameters.NumericRank;
-                                            wi.OriginalWordType = WordType.English;
-                                            wi.WordType = WordType.Numeric;
-                                        }
-                                        else
-                                        {
-                                            wi = new WordInfo(splitWord, POS.POS_A_NX, 1);
-                                            wi.Position = position;
-                                            wi.Rank = _Parameters.EnglishRank;
-                                            wi.OriginalWordType = WordType.English;
-                                            wi.WordType = WordType.English;
-                                        }
+                                            if (string.IsNullOrEmpty(splitWord))
+                                            {
+                                                continue;
+                                            }
 
-                                        result.AddBefore(cur, wi);
-                                        position += splitWord.Length;
+                                            WordInfo wi;
+
+                                            if (splitWord[0] >= '0' && splitWord[0] <= '9')
+                                            {
+                                                wi = new WordInfo(splitWord, POS.POS_A_M, 1);
+                                                wi.Position = position;
+                                                wi.Rank = _Parameters.NumericRank;
+                                                wi.OriginalWordType = WordType.English;
+                                                wi.WordType = WordType.Numeric;
+                                            }
+                                            else
+                                            {
+                                                wi = new WordInfo(splitWord, POS.POS_A_NX, 1);
+                                                wi.Position = position;
+                                                wi.Rank = _Parameters.EnglishRank;
+                                                wi.OriginalWordType = WordType.English;
+                                                wi.WordType = WordType.English;
+                                            }
+
+                                            result.AddBefore(cur, wi);
+                                            position += splitWord.Length;
+                                        }
                                     }
                                 }
                             }
@@ -541,7 +555,7 @@ namespace PanGu
             }
         }
 
-        private void ProcessAfterSegment(SuperLinkedList<WordInfo> result)
+        private void ProcessAfterSegment(string orginalText, SuperLinkedList<WordInfo> result)
         {
             //匹配同义词
             if (_Options.SynonymOutput)
@@ -627,6 +641,7 @@ namespace PanGu
 
                 if (rule != null)
                 {
+                    rule.Text = orginalText;
                     rule.AfterSegment(result);
                 }
 
@@ -676,7 +691,7 @@ namespace PanGu
                     FilterStopWord(result);
                 }
 
-                ProcessAfterSegment(result);
+                ProcessAfterSegment(text, result);
 
                 return result;
             }

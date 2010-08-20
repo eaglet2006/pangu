@@ -62,6 +62,7 @@ namespace Demo
             checkBoxFilterStopWords.Checked = options.FilterStopWords;
             checkBoxMatchName.Checked = options.ChineseNameIdentify;
             checkBoxMultiSelect.Checked = options.MultiDimensionality;
+            checkBoxEnglishMultiSelect.Checked = options.EnglishMultiDimensionality;
             checkBoxForceSingleWord.Checked = options.ForceSingleWord;
             checkBoxTraditionalChs.Checked = options.TraditionalChineseEnabled;
             checkBoxST.Checked = options.OutputSimplifiedTraditional;
@@ -164,6 +165,7 @@ namespace Demo
             _Options.FilterStopWords = checkBoxFilterStopWords.Checked;
             _Options.ChineseNameIdentify = checkBoxMatchName.Checked;
             _Options.MultiDimensionality = checkBoxMultiSelect.Checked;
+            _Options.EnglishMultiDimensionality = checkBoxEnglishMultiSelect.Checked;
             _Options.ForceSingleWord = checkBoxForceSingleWord.Checked;
             _Options.TraditionalChineseEnabled = checkBoxTraditionalChs.Checked;
             _Options.OutputSimplifiedTraditional = checkBoxST.Checked;
