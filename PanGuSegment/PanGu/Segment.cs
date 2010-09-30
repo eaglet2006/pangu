@@ -151,6 +151,30 @@ namespace PanGu
                 newWordInfo.WordType = WordType.English;
                 newWordInfo.Rank = _Parameters.EnglishRank;
 
+                if (_Options.EnglishSegment)
+                {
+                    string lowerWord = newWordInfo.Word.ToLower();
+
+                    if (lowerWord != newWordInfo.Word)
+                    {
+                        if (current == null)
+                        {
+                            wordInfoList.AddLast(newWordInfo);
+                        }
+                        else
+                        {
+                            wordInfoList.AddBefore(current, newWordInfo);
+                        }
+                    }
+
+                    newWordInfo = new WordInfo(lowerWord, newWordInfo.Position, newWordInfo.Pos, newWordInfo.Frequency, _Parameters.EnglishLowerRank, newWordInfo.WordType,
+                        newWordInfo.OriginalWordType);
+                }
+                else if (_Options.IgnoreCapital)
+                {
+                    newWordInfo.Word = newWordInfo.Word.ToLower();
+                }
+
                 if (current == null)
                 {
                     wordInfoList.AddLast(newWordInfo);
@@ -398,11 +422,6 @@ namespace PanGu
                         List<string> output;
                         cur.Value.Word = ConvertChineseCapitalToAsiic(cur.Value.Word);
 
-                        if (_Options.IgnoreCapital)
-                        {
-                            cur.Value.Word = cur.Value.Word.ToLower();
-                        }
-
                         if (_Options.EnglishSegment)
                         {
                             string lower = cur.Value.Word.ToLower();
@@ -423,6 +442,10 @@ namespace PanGu
                                         _Parameters.EnglishStemRank, WordType.English, WordType.English));
                                 }
                             }
+                        }
+                        else if (_Options.IgnoreCapital)
+                        {
+                            cur.Value.Word = cur.Value.Word.ToLower();
                         }
 
                         if (_Options.EnglishMultiDimensionality)
