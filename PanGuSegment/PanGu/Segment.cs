@@ -750,14 +750,6 @@ namespace PanGu
                 _Synonym.Load(dir);
             }
 
-            _Wildcard = new PanGu.Dict.Wildcard(Setting.PanGuSettings.Config.MatchOptions,
-                Setting.PanGuSettings.Config.Parameters);
-
-            if (Setting.PanGuSettings.Config.MatchOptions.WildcardOutput)
-            {
-                _Wildcard.Load(dir);
-            }
-
             _DictLoader = new PanGu.Dict.DictionaryLoader(Setting.PanGuSettings.Config.GetDictionaryPath());
         }
 
@@ -829,6 +821,17 @@ namespace PanGu
                 LoadDictionary();
 
                 _Inited = true;
+
+                _Wildcard = new PanGu.Dict.Wildcard(Setting.PanGuSettings.Config.MatchOptions,
+                    Setting.PanGuSettings.Config.Parameters);
+
+                string dir = Setting.PanGuSettings.Config.GetDictionaryPath();
+
+                if (Setting.PanGuSettings.Config.MatchOptions.WildcardOutput)
+                {
+                    _Wildcard.Load(dir);
+                }
+
             }
         }
 
