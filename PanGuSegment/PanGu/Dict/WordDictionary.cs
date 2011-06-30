@@ -567,6 +567,8 @@ namespace PanGu.Dict
             {
                 if (_FirstCharDict.ContainsKey(key[0]))
                 {
+                    _FirstCharDict[key[0]].Pos = pos;
+                    _FirstCharDict[key[0]].Frequency += frequency;
                     return;
                 }
             }
@@ -576,12 +578,17 @@ namespace PanGu.Dict
                 uint doubleChar = ((uint)key[0] * 65536) + key[1];
                 if (_DoubleCharDict.ContainsKey(doubleChar))
                 {
+                    _DoubleCharDict[doubleChar].Pos = pos;
+                    _DoubleCharDict[doubleChar].Frequency += frequency;
+
                     return;
                 }
             }
 
             if (_WordDict.ContainsKey(key))
             {
+                _WordDict[key].Pos = pos;
+                _WordDict[key].Frequency += frequency;
                 return;
             }
 

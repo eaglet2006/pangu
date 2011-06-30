@@ -233,6 +233,25 @@ namespace DictManage
                     continue;
                 }
 
+                string[] strs = word.Split(new char[] { '|' });
+
+                if (strs.Length == 3)
+                {
+                    try
+                    {
+                        POS pos = (POS)int.Parse(strs[1].Substring(2, strs[1].Length - 2), 
+                            System.Globalization.NumberStyles.HexNumber);
+                        double frequency = double.Parse(strs[2]);
+                        string w = strs[0].Trim();
+                        _WordDict.InsertWord(w, frequency, pos);
+                        continue;
+                    }
+                    catch
+                    {
+                    }
+                }
+
+
                 FormBatchInsert frmBatchInsert = new FormBatchInsert();
 
                 if (!allUse || lstWord == null)
